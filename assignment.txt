@@ -1,0 +1,87 @@
+ASSIGNMENT
+Grouping
+• Each group must have a minimum of 3 students.
+Task
+• Choose one of following topics for a database application (see the attached list).
+• Design and implement the database to store data for this project. You need to:
+1. Write the user requirement (summarizes the selected design requirements, and
+may remove some non-critical details).
+2. Design E/R diagram (find entity sets, attributes, and relationships in your
+project -> make ERD).
+3. Convert E/R diagram to relational data model. Normalize this to 3NF.
+4. Define all necessary constraints.
+5. Implement this design into SQL Server.
+6. Insert data into the database. Write all the SQL statements, functions, stored
+procedures, and triggers to perform all the necessary transactions of the
+application.
+Documents
+Document Content File name Deadline
+.DOCX file
+- List of students.
+- Problems (write the user requirement).
+- Project Scope & Tools.
+Report 1: Decomposition
+- Team Involvements.
+- Entity sets: ...
+- Relationships: ...
+- Attributes (determining what belongs
+to each entity set)
+-> make E/R diagram.
+Report 2: Pattern Recognition
+- Team Involvements.
+- Convert E/R diagram to relational data
+model.
+- Look for repeating patterns or rules in
+data -> Indicates which relation schema
+is not normalized.
+Report 3: Abstraction
+- Team Involvements
+- Represent observed patterns as
+Functional Dependencies (FDs) ->
+Normalize the Database Schema to 3NF.
+DBI202_Class_Name
+OfGroup.docx
+See it on
+LMSReport 4: Algorithm Design
+- Team Involvements.
+- Build normalized tables with primary
+keys, foreign keys, and additional
+constraints if applicable.
+- Implement this design into SQL
+Server.
+Report 5: Final Project Report
+- Team Involvements
+- Insert data into the database.
+- Write all the SQL statements,
+functions, stored procedures, and
+triggers to perform all the necessary
+transactions of the application.
+- Final Thoughts.
+.SQL file
+All T-SQL source code used in the
+project
+- Create database, tables and constraints
+- Insert data into the database
+- Execute SQL queries, triggers (to set
+up complex constraints), functions and
+procedures (to solve business) ect.
+DBI202_Class_Name
+OfGroup.sql
+.PPTX file
+Group presentation slides
+- List and tasks of team members
+- Design requirements and results of
+completing the selected topic
+DBI202_Class_Name
+OfGroup.pptx
+Available AI Tools
+1> Database Design:
+- ChatGPT/ Copilot: Ask AI to suggest E/R diagrams or normalize tables.
+- draw.io + AI plugins (e.g. DiagramGPT): Generate E/R diagrams.
+2> SQL Practice & Debugging:
+‐ AI SQL Tutor (like Text2SQL models): Convert natural language to SQL queries.
+‐ Students can paste broken SQL queries into AI tools (ChatGPT, GitHub Copilot) for
+debugging and explanation.
+References
+- Applying AI and Computational Thinking to Assignment_v1.1
+- Applying AI and Computational Thinking to Find FDs_v1.1

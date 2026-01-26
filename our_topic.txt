@@ -1,0 +1,15 @@
+3. Library Management System
+Consider the following set of requirements for a database that is used to manage a library.
+The library stores information about books, including book ID, title, subject category, and
+publication year. A book may have multiple authors.
+Information about authors includes author ID, name, nationality, and year of birth. An author
+may write multiple books.
+Each book may have multiple copies, identified by copy ID, condition, and status. A copy can be
+borrowed by only one member at a time.
+Information about publishers includes publisher ID, name, address, and contact number. Each
+book is published by one publisher.
+Library members have a member ID, name, address, phone number, and membership type.
+Members may borrow multiple books. Each loan record stores borrow date, due date, return
+date, and overdue fine if applicable. Fines are calculated per day overdue.
+The system must support reports on most borrowed books, member borrowing history, overdue
+items, and book statistics by author or publisher

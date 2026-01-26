@@ -1,0 +1,14 @@
+# BMAD Framework Outputs
+# Ignore toàn bộ BMAD output
+
+# Claude AI
+.claude/
+*.claude
+.claude*
+settings.local.json
+*.local.json
+
+.cursor/
+.github/
+_bmad/
+.agent/

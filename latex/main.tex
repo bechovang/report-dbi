@@ -1,0 +1,874 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+
+\documentclass[12pt,a4paper]{article}
+
+%===========================================================
+% PACKAGES FOR VIETNAMESE SUPPORT AND FORMATTING
+%===========================================================
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+% Vietnamese language support
+\usepackage[vietnamese]{babel}
+
+% Font setup for XeLaTeX
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Courier New}
+
+%===========================================================
+% ADDITIONAL PACKAGES
+%===========================================================
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{titling}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,backgrounds,calc}
+
+%===========================================================
+% PAGE GEOMETRY
+%===========================================================
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+%===========================================================
+% HYPERREF SETUP
+%===========================================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=green,
+    pdftitle={Báo Cáo 1: Phân Rã - Hệ Thống Quản Lý Thư Viện},
+    pdfauthor={Nhóm 2 - Lớp AI2005},
+    pdfsubject={Database Systems - DBI202},
+    pdfkeywords={library, database, ERD, decomposition}
+}
+
+%===========================================================
+% TITLE FORMATTING
+%===========================================================
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\Roman{section}.}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\Alph{subsection}.}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\arabic{subsubsection}.}{1em}{}
+
+%===========================================================
+% CUSTOM COMMANDS
+%===========================================================
+\newcommand{\titlename}[1]{\textbf{#1}}
+\newcommand{\entity}[1]{\texttt{#1}}
+\newcommand{\pk}[1]{\textbf{PK:} #1}
+\newcommand{\fk}[1]{\textbf{FK:} #1}
+\newcommand{\attr}[1]{\textit{#1}}
+
+%===========================================================
+% DOCUMENT BEGIN
+%===========================================================
+\begin{document}
+
+%===========================================================
+% TITLE PAGE
+%===========================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+
+    % University Logo (if available)
+    %\includegraphics[width=3cm]{fpt_logo.png}
+    \vspace{0.5cm}
+
+    {\Huge\bfseries ĐẠI HỌC FPT}\\
+    {\Huge\bfseries FPT UNIVERSITY}\\[1cm]
+
+    {\Large\textbf{Thể loại:}} Assignment\\[0.3cm]
+    {\Large\textbf{CHỦ ĐỀ:}}\\[0.3cm]
+    {\huge\bfseries XÂY DỰNG HỆ THỐNG CƠ SỞ DỮ LIỆU\\ QUẢN LÝ THƯ VIỆN}\\[0.5cm]
+    {\Large BUILDING A DATABASE SYSTEM FOR\\ LIBRARY MANAGEMENT}\\[2cm]
+
+    {\Large\textbf{MÔN HỌC:} HỆ THỐNG CƠ SỞ DỮ LIỆU}\\[0.3cm]
+    {\Large\textbf{COURSE:} DATABASE SYSTEMS (DBI202)}\\[0.3cm]
+    {\Large\textbf{LỚP:} SE2043}\\[2cm]
+
+    \begin{flushleft}
+        {\Large\textbf{GIẢNG VIÊN HƯỚNG DẪN:}}\\
+        {\Large VŨ THANH PHONG}\\[1cm]
+
+        {\Large\textbf{NHÓM 2}}\\[0.5cm]
+
+        \begin{tabular}{@{}ll@{}}
+        1.  & Nguyễn Ngọc Phúc \quad \quad MSSV: SE203055 \\
+        2.  & Thân Nhật Huy \quad MSSV: SE203317 \\
+        3.  & Võ Hoàng Đình Trường \quad \quad MSSV: SE203475 \\
+        4.  & xxxx \quad \quad MSSV: SE171267 \\
+        5.  & xxxxx \quad \quad \quad MSSV: SS170814 \\
+        6.  & xxxxxx \quad MSSV: SE201706 \\
+        7.  & xxxxxxxx \quad \quad MSSV: SE191138 \\
+        \end{tabular}
+    \end{flushleft}
+
+    \vfill
+
+    {\large\today}
+\end{titlepage}
+
+%===========================================================
+% TABLE OF CONTENTS
+%===========================================================
+\tableofcontents
+\newpage
+
+%===========================================================
+% SECTION 0: INTRODUCTION
+%===========================================================
+\section{GIỚI THIỆU TỔNG QUAN}
+
+\subsection{Phân tích bối cảnh và vấn đề bài toán}
+
+\subsubsection{Bối cảnh bài toán}
+
+Một thư viện cần xây dựng một hệ thống cơ sở dữ liệu để lưu trữ và quản lý toàn bộ thông tin liên quan đến các hoạt động quản lý sách và dịch vụ cho độc giả. Hệ thống này phải đảm bảo khả năng theo dõi thông tin chi tiết về các cuốn sách (\entity{BOOK}), các tác giả (\entity{AUTHOR}), nhà xuất bản (\entity{PUBLISHER}), bản sao sách (\entity{BOOK\_COPY}), và thành viên thư viện (\entity{MEMBER}). Dữ liệu bao gồm thông tin xuất bản, thông tin mượn/trả sách, tình trạng sách, và các khoản phí phạt khi trả sách muộn.
+
+\subsubsection{Vấn đề cần giải quyết}
+
+Bài toán đặt ra là phải thiết kế một mô hình cơ sở dữ liệu quan hệ có khả năng biểu diễn chính xác các mối quan hệ phức tạp giữa các thực thể nói trên. Cụ thể:
+
+\begin{itemize}
+    \item Mỗi cuốn sách có thể có nhiều tác giả, và mỗi tác giả có thể viết nhiều sách (mối quan hệ nhiều-nhiều).
+    \item Mỗi cuốn sách có thể có nhiều bản sao, và mỗi bản sao có thể được mượn bởi một thành viên tại một thời điểm.
+    \item Mỗi cuốn sách được xuất bản bởi một nhà xuất bản duy nhất.
+    \item Thành viên thư viện có thể mượn nhiều sách, và mỗi lần mượn cần lưu trữ thông tin ngày mượn, ngày hết hạn, ngày trả, và khoản phí phạt (nếu có).
+    \item Hệ thống phải hỗ trợ các báo cáo: sách được mượn nhiều nhất, lịch sử mượn sách của thành viên, các sách quá hạn, và thống kê sách theo tác giả hoặc nhà xuất bản.
+\end{itemize}
+
+Do đó, yêu cầu cốt lõi của bài toán là phân tích, xác định các thực thể, thuộc tính, và mối quan hệ giữa chúng, sau đó chuẩn hóa dữ liệu để đảm bảo tính toàn vẹn, tránh dư thừa và hỗ trợ truy vấn hiệu quả cho hoạt động quản lý của thư viện.
+
+\subsection{Yêu cầu chức năng từ người dùng}
+
+Dựa trên nhu cầu quản lý thư viện, cơ sở dữ liệu phải hỗ trợ các chức năng sau:
+
+\subsubsection{Quản lý sách (Book Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ thông tin chi tiết về các cuốn sách, bao gồm:
+    \begin{itemize}
+        \item Mã sách (\attr{BookID}) - định danh duy nhất
+        \item Tên sách (\attr{Title})
+        \item Thể loại/Sự phân loại (\attr{SubjectCategory})
+        \item Năm xuất bản (\attr{PublicationYear})
+        \item Nhà xuất bản (\attr{Publisher})
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Hệ thống có thể tra cứu, tìm kiếm và quản lý danh mục sách hiệu quả.
+
+\subsubsection{Quản lý tác giả (Author Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ thông tin chi tiết về các tác giả:
+    \begin{itemize}
+        \item Mã tác giả (\attr{AuthorID}) - định danh duy nhất
+        \item Tên tác giả (\attr{Name})
+        \item Quốc tịch (\attr{Nationality})
+        \item Năm sinh (\attr{YearOfBirth})
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Theo dõi danh mục tác giả và các tác phẩm của họ.
+
+\subsubsection{Quản lý nhà xuất bản (Publisher Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ thông tin về các nhà xuất bản:
+    \begin{itemize}
+        \item Mã nhà xuất bản (\attr{PublisherID}) - định danh duy nhất
+        \item Tên nhà xuất bản (\attr{Name})
+        \item Địa chỉ (\attr{Address})
+        \item Số điện thoại liên hệ (\attr{ContactNumber})
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Quản lý thông tin đối tác cung cấp sách.
+
+\subsubsection{Quản lý bản sao sách (Book Copy Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ thông tin về từng bản sao vật lý của sách:
+    \begin{itemize}
+        \item Mã bản sao (\attr{CopyID}) - định danh duy nhất
+        \item Tình trạng (\attr{Condition}) - mới, cũ, hư hại
+        \item Trạng thái (\attr{Status}) - có sẵn, đang mượn, bảo dưỡng
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Theo dõi chính xác số lượng sách sẵn sàng cho mượn.
+
+\subsubsection{Quản lý thành viên (Member Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ thông tin thành viên thư viện:
+    \begin{itemize}
+        \item Mã thành viên (\attr{MemberID}) - định danh duy nhất
+        \item Tên thành viên (\attr{Name})
+        \item Địa chỉ (\attr{Address})
+        \item Số điện thoại (\attr{PhoneNumber})
+        \item Loại thành viên (\attr{MembershipType}) - sinh viên, giảng viên, độc giả thường
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Quản lý thông tin độc giả và phân loại quyền lợi.
+
+\subsubsection{Quản lý mượn/trả sách (Loan Management)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item Lưu trữ chi tiết các giao dịch mượn/trả:
+    \begin{itemize}
+        \item Mã mượn (\attr{LoanID}) - định danh duy nhất
+        \item Ngày mượn (\attr{BorrowDate})
+        \item Ngày hết hạn (\attr{DueDate})
+        \item Ngày trả (\attr{ReturnDate})
+        \item Phí phạt quá hạn (\attr{OverdueFine}) - tính theo ngày
+    \end{itemize}
+\end{itemize}
+
+\textbf{Mục đích:} Theo dõi luồng sách mượn/trả và tính toán phí phạt.
+
+\subsubsection{Báo cáo thống kê (Reporting Requirements)}
+
+\textbf{Yêu cầu:}
+\begin{itemize}
+    \item \textbf{Sách được mượn nhiều nhất:} Tổng hợp số lần mượn của từng sách
+    \item \textbf{Lịch sử mượn của thành viên:} Xem tất cả sách một thành viên đã mượn
+    \item \textbf{Sách quá hạn:} Liệt kê sách chưa trả và quá hạn
+    \item \textbf{Thống kê theo tác giả:} Số lượng sách và lượt mượn theo từng tác giả
+    \item \textbf{Thống kê theo nhà xuất bản:} Số lượng sách theo từng nhà xuất bản
+\end{itemize}
+
+\textbf{Mục đích:} Hỗ trợ quản lý ra quyết định về mua sách, điều chỉnh quy định, và cải thiện dịch vụ.
+
+\subsection{Phạm vi dự án và công cụ sử dụng}
+
+\subsubsection{Phạm vi dự án}
+
+\textbf{Trong phạm vi dự án (In Scope):}
+\begin{itemize}
+    \item Phân tích yêu cầu và thiết kế sơ đồ ERD
+    \item Chuyển đổi ERD sang mô hình quan hệ (Relational Data Model)
+    \item Chuẩn hóa cơ sở dữ liệu đến 3NF (Third Normal Form)
+    \item Định nghĩa lược đồ cơ sở dữ liệu với các ràng buộc (Constraints)
+    \item Triển khai cơ sở dữ liệu trên SQL Server
+    \item Thêm dữ liệu mẫu (Sample Data)
+    \item Tạo các stored procedures, functions, và triggers
+    \item Viết các câu lệnh SQL truy vấn cho báo cáo
+\end{itemize}
+
+\textbf{Ví dụ về các câu truy vấn SQL cần triển khai:}
+\begin{itemize}
+    \item Liệt kê tất cả các tác phẩm của một tác giả cụ thể
+    \item Tìm các thành viên đang mượn sách quá hạn
+    \item Thống kê sách được mượn nhiều nhất
+    \item Tính tổng phí phạt của một thành viên
+    \item Lấy lịch sử mượn sách của một thành viên
+\end{itemize}
+
+\textbf{Ngoài phạm vi dự án (Out of Scope):}
+\begin{itemize}
+    \item Giao diện người dùng đồ họa (GUI/Web Application)
+    \item Hệ thống thanh toán điện tử
+    \item Quản lý kho phức tạp (đặt hàng, nhập hàng)
+    \item Hệ thống thông báo tự động (email/SMS)
+    \item Phân tích dữ liệu nâng cao (Data Analytics)
+    \item Quản lý người dùng và phân quyền chi tiết
+\end{itemize}
+
+\subsubsection{Công cụ sử dụng}
+
+\begin{table}[H]
+\centering
+\caption{Công cụ và công nghệ sử dụng}
+\begin{tabular}{@{}|l|l|l|@{}}
+\hline
+\textbf{Công cụ} & \textbf{Mục đích} & \textbf{Lý do chọn} \\ \hline
+SQL Server & Hệ quản trị CSDL & Đáng tin cậy, hỗ trợ T-SQL đầy đủ \\ \hline
+SSMS & Công cụ phát triển & Giao diện trực quan, hỗ trợ debug T-SQL \\ \hline
+draw.io & Tạo sơ đồ ERD & Công cụ trực quan, hỗ trợ AI \\ \hline
+T-SQL & Ngôn ngữ truy vấn & Ngôn ngữ chuẩn của SQL Server \\ \hline
+Git/GitHub & Quản lý phiên bản & Theo dõi thay đổi mã nguồn \\ \hline
+Word/Markdown & Tài liệu hóa & Tạo báo cáo và tài liệu kỹ thuật \\ \hline
+\end{tabular}
+\end{table}
+
+%===========================================================
+% SECTION 1: REPORT 1 - DECOMPOSITION
+%===========================================================
+\section{BÁO CÁO 1: PHÂN RÃ}
+
+\subsection{Phân công nhiệm vụ}
+
+\begin{table}[H]
+\centering
+\caption{Phân công nhiệm vụ nhóm}
+\begin{tabular}{@{}|l|l|p{8cm}|l|@{}}
+\hline
+\textbf{MSSV} & \textbf{Họ và tên} & \textbf{Phân công nhiệm vụ} & \textbf{Đánh giá} \\ \hline
+SE200064 & Lê Khôi Nguyên & Thiết kế E/R Diagram, kiểm tra chất lượng tài liệu & Điểm: 10 \\ \hline
+SE191001 & Nguyễn Thị Thanh Thảo & Thu thập và phân tích yêu cầu người dùng & Điểm: 10 \\ \hline
+SE201706 & Trần Đình Bảo Hoàng & Xác định mối quan hệ giữa các thực thể & Điểm: 2 \\ \hline
+SE201711 & Đoàn Đức Nguyên & Xác định mối quan hệ giữa các thực thể & Điểm: 2 \\ \hline
+SE191138 & Nguyễn Tiến Dũng & Xác định các thực thể và thuộc tính & Điểm: 7 \\ \hline
+SE171267 & Trần Phương Uyên & Tổng hợp các tài liệu và viết báo cáo 1 & Điểm: 9 \\ \hline
+SS170814 & Lê Kim Ngân & Phân công nhiệm vụ, kiểm tra tài liệu & Điểm: 10 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Cơ sở lý thuyết}
+
+\subsubsection{Khái niệm về Phân rã (Decomposition)}
+
+Phân rã trong thiết kế cơ sở dữ liệu là quá trình đầu tiên và quan trọng nhất trong việc chuyển đổi các yêu cầu nghiệp vụ phức tạp thành một mô hình dữ liệu có cấu trúc. Quá trình này bao gồm:
+
+\textbf{1. Xác định Thực thể (Entity Identification):}
+\begin{itemize}
+    \item Nhận diện các đối tượng chính trong hệ thống cần quản lý
+    \item Mỗi thực thể đại diện cho một danh mục (category) của dữ liệu
+    \item Ví dụ: \entity{BOOK} (Sách), \entity{MEMBER} (Thành viên), \entity{LOAN} (Mượn/trả)
+\end{itemize}
+
+\textbf{2. Xác định Thuộc tính (Attribute Identification):}
+\begin{itemize}
+    \item Mô tả các đặc điểm chi tiết của từng thực thể
+    \item Phân loại thuộc tính: đơn (simple), phức hợp (composite), đa trị (multi-valued), dẫn xuất (derived)
+    \item Xác định khóa chính (Primary Key) để định danh duy nhất
+\end{itemize}
+
+\textbf{3. Xác định Mối quan hệ (Relationship Identification):}
+\begin{itemize}
+    \item Mô tả sự liên kết giữa các thực thể
+    \item Xác định bội số (cardinality): 1-1, 1-N, N-M
+    \item Xác định tính chất (optionality): bắt buộc hoặc tùy chọn
+\end{itemize}
+
+\textbf{Kết quả:} Sơ đồ Thực thể - Mối quan hệ (Entity-Relationship Diagram - ERD), giúp trực quan hóa cấu trúc dữ liệu trước khi chuyển đổi sang mô hình quan hệ.
+
+\subsubsection{Các thành phần chính trong mô hình E/R}
+
+\textbf{1. Entity (Thực thể):}
+\begin{itemize}
+    \item \textbf{Định nghĩa:} Là tập hợp các đối tượng có cùng đặc điểm và thuộc tính
+    \item \textbf{Biểu diễn:} Hình chữ nhật trong ERD
+    \item \textbf{Đặc điểm:} Có tên duy nhất, có khóa chính (Primary Key) để định danh
+\end{itemize}
+
+\textbf{2. Attribute (Thuộc tính):}
+\begin{itemize}
+    \item \textbf{Định nghĩa:} Mô tả các đặc trưng của thực thể hoặc mối quan hệ
+    \item \textbf{Biểu diễn:} Hình ellip trong ERD
+    \item \textbf{Phân loại:}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Phân loại thuộc tính}
+\begin{tabular}{@{}|l|p{8cm}|l|@{}}
+\hline
+\textbf{Loại} & \textbf{Mô tả} & \textbf{Ví dụ} \\ \hline
+Simple (Đơn) & Không thể chia nhỏ & Title, Year \\ \hline
+Composite (Phức hợp) & Có thể chia nhỏ & Address = Street + City \\ \hline
+Multi-valued (Đa trị) & Có nhiều giá trị & Phone numbers \\ \hline
+Derived (Dẫn xuất) & Giá trị tính từ thuộc tính khác & Age = Year - BirthYear \\ \hline
+Key (Khóa) & Định danh duy nhất & BookID, ISBN \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{3. Relationship (Mối quan hệ):}
+\begin{itemize}
+    \item \textbf{Định nghĩa:} Mô tả sự liên kết giữa hai hoặc nhiều thực thể
+    \item \textbf{Biểu diễn:} Hình thoi (diamond) trong ERD
+    \item \textbf{Bội số (Cardinality):}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Các loại bội số}
+\begin{tabular}{@{}|l|l|@{}}
+\hline
+\textbf{Loại} & \textbf{Ý nghĩa} \\ \hline
+One-to-One (1:1) & Một bản ghi của A liên kết với một bản ghi của B \\ \hline
+One-to-Many (1:N) & Một bản ghi của A liên kết với nhiều bản ghi của B \\ \hline
+Many-to-Many (N:M) & Nhiều bản ghi của A liên kết với nhiều bản ghi của B \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Quy trình xác định E/R Diagram}
+
+\textbf{Bước 1:} Phân tích yêu cầu bài toán - Đọc và hiểu rõ yêu cầu nghiệp vụ
+
+\textbf{Bước 2:} Xác định các thực thể chính - Tìm các danh từ chính trong yêu cầu
+
+\textbf{Bước 3:} Xác định mối quan hệ - Tìm các động từ mô tả sự liên kết
+
+\textbf{Bước 4:} Liệt kê thuộc tính - Tìm các tính từ mô tả đặc điểm
+
+\textbf{Bước 5:} Vẽ sơ đồ E/R - Sử dụng công cụ: draw.io, Visual Paradigm
+
+\textbf{Bước 6:} Kiểm tra và hoàn thiện - Rà soát lại các yêu cầu
+
+\subsection{Tập thực thể}
+
+Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \textbf{6 thực thể chính} cần quản lý trong hệ thống thư viện:
+
+\subsubsection{1. BOOK (SÁCH)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin về các cuốn sách trong thư viện
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể BOOK}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{BookID} & INT & Mã định danh duy nhất & PK, NOT NULL \\ \hline
+\attr{ISBN} & VARCHAR(17) & Mã số tiêu chuẩn quốc tế & UNIQUE \\ \hline
+\attr{Title} & VARCHAR(255) & Tên tiêu đề của sách & NOT NULL \\ \hline
+\attr{SubjectCategory} & VARCHAR(100) & Thể loại phân loại sách & NULL \\ \hline
+\attr{PublicationYear} & INT & Năm xuất bản sách & NULL \\ \hline
+\attr{PublisherID} & INT & Mã nhà xuất bản & FK \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{2. AUTHOR (TÁC GIẢ)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin cá nhân về các tác giả của sách
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể AUTHOR}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{AuthorID} & INT & Mã định danh duy nhất & PK, NOT NULL \\ \hline
+\attr{Name} & VARCHAR(255) & Tên đầy đủ của tác giả & NOT NULL \\ \hline
+\attr{Nationality} & VARCHAR(100) & Quốc tịch của tác giả & NULL \\ \hline
+\attr{YearOfBirth} & INT & Năm sinh của tác giả & NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{3. PUBLISHER (NHÀ XUẤT BẢN)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin về các nhà xuất bản
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể PUBLISHER}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{PublisherID} & INT & Mã định danh duy nhất & PK, NOT NULL \\ \hline
+\attr{Name} & VARCHAR(255) & Tên nhà xuất bản & NOT NULL \\ \hline
+\attr{Address} & VARCHAR(500) & Địa chỉ của nhà xuất bản & NULL \\ \hline
+\attr{ContactNumber} & VARCHAR(50) & Số điện thoại liên hệ & NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{4. BOOK\_COPY (BẢN SAO SÁCH)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin về từng bản sao vật lý của sách
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể BOOK\_COPY}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{CopyID} & INT & Mã định danh duy nhất của bản sao & PK, NOT NULL \\ \hline
+\attr{BookID} & INT & Mã sách mà bản sao thuộc về & FK, NOT NULL \\ \hline
+\attr{Condition} & VARCHAR(50) & Tình trạng bản sao & NULL \\ \hline
+\attr{Status} & VARCHAR(20) & Trạng thái hiện tại & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi chú:}
+\begin{itemize}
+    \item \attr{Condition}: New (Mới), Good (Tốt), Fair (Trung bình), Poor (Kém)
+    \item \attr{Status}: Available (Sẵn sàng), Borrowed (Đang mượn), Maintenance (Bảo dưỡng), Lost (Mất)
+\end{itemize}
+
+\subsubsection{5. MEMBER (THÀNH VIÊN)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin về thành viên thư viện
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể MEMBER}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{MemberID} & INT & Mã định danh duy nhất & PK, NOT NULL \\ \hline
+\attr{Name} & VARCHAR(255) & Tên đầy đủ của thành viên & NOT NULL \\ \hline
+\attr{Address} & VARCHAR(500) & Địa chỉ liên lạc & NULL \\ \hline
+\attr{Phone} & VARCHAR(20) & Số điện thoại liên hệ & NULL \\ \hline
+\attr{MembershipType} & VARCHAR(50) & Loại thành viên & NOT NULL \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi thích:} \attr{MembershipType}: Student (Sinh viên), Faculty (Giảng viên), Standard (Thông thường), Premium (VIP)
+
+\subsubsection{6. LOAN (MƯỢN/TRẢ)}
+
+\textbf{Mô tả thực thể:} Lưu trữ thông tin về các giao dịch mượn/trả sách
+
+\begin{table}[H]
+\centering
+\caption{Thuộc tính thực thể LOAN}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{LoanID} & INT & Mã định danh duy nhất & PK, NOT NULL \\ \hline
+\attr{MemberID} & INT & Mã thành viên mượn & FK, NOT NULL \\ \hline
+\attr{CopyID} & INT & Mã bản sao được mượn & FK, NOT NULL \\ \hline
+\attr{BorrowDate} & DATE & Ngày mượn sách & NOT NULL \\ \hline
+\attr{DueDate} & DATE & Ngày hết hạn phải trả & NOT NULL \\ \hline
+\attr{ReturnDate} & DATE & Ngày thực tế trả sách & NULL \\ \hline
+\attr{OverdueFine} & DECIMAL(10,2) & Phí phạt quá hạn & DEFAULT 0 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Tổng hợp thực thể}
+
+\begin{table}[H]
+\centering
+\caption{Bảng tổng hợp 6 thực thể chính}
+\begin{tabular}{@{}|c|l|l|@{}}
+\hline
+\textbf{\#} & \textbf{Tên thực thể} & \textbf{Mô tả} & \textbf{Khóa chính} \\ \hline
+1 & \entity{BOOK} & Danh mục sách trong thư viện & \attr{BookID} \\ \hline
+2 & \entity{AUTHOR} & Danh mục tác giả & \attr{AuthorID} \\ \hline
+3 & \entity{PUBLISHER} & Danh mục nhà xuất bản & \attr{PublisherID} \\ \hline
+4 & \entity{BOOK\_COPY} & Các bản sao vật lý của sách & \attr{CopyID} \\ \hline
+5 & \entity{MEMBER} & Thành viên thư viện & \attr{MemberID} \\ \hline
+6 & \entity{LOAN} & Giao dịch mượn/trả sách & \attr{LoanID} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Các mối quan hệ}
+
+Sau khi xác định các thực thể, chúng tôi phân tích và xác định được \textbf{5 mối quan hệ chính}:
+
+\begin{table}[H]
+\centering
+\caption{Bảng tổng hợp 5 mối quan hệ}
+\begin{tabular}{@{}|c|l|l|l|p{5cm}|@{}}
+\hline
+\textbf{\#} & \textbf{Tên} & \textbf{Thực thể 1} & \textbf{Thực thể 2} & \textbf{Bội số} & \textbf{Mô tả} \\ \hline
+1 & Publishes & \entity{PUBLISHER} & \entity{BOOK} & 1 : N & Một nhà XB xuất bản nhiều sách \\ \hline
+2 & Writes & \entity{AUTHOR} & \entity{BOOK} & M : N & Tác giả viết sách (qua BOOK\_AUTHOR) \\ \hline
+3 & Has & \entity{BOOK} & \entity{BOOK\_COPY} & 1 : N & Một sách có nhiều bản sao vật lý \\ \hline
+4 & Processes & \entity{MEMBER} & \entity{LOAN} & 1 : N & Thành viên tạo nhiều giao dịch mượn \\ \hline
+5 & Records & \entity{LOAN} & \entity{BOOK\_COPY} & 1 : 1 & Một giao dịch ghi nhận một bản sao \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi thích về cấu trúc mối quan hệ:}
+
+\begin{itemize}
+    \item \textbf{Quan hệ mượn sách:} Thành viên không trực tiếp kết nối đến bản sao sách. Thay vào đó, một thành viên tạo một giao dịch \entity{LOAN}, và giao dịch đó ghi nhận bản sao sách cụ thể được mượn.
+    \item Cấu trúc này cho phép lưu trữ đầy đủ thông tin về mỗi lần mượn: ngày mượn, ngày hết hạn, ngày trả, và phí phạt.
+    \item Điều này cũng cho phép theo dõi lịch sử mượn của một thành viên qua thời gian.
+\end{itemize}
+
+\subsection{Thuộc tính chi tiết}
+
+\subsubsection{Bảng trung gian BOOK\_AUTHOR}
+
+Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều (M:N), chúng tôi cần một bảng trung gian:
+
+\begin{table}[H]
+\centering
+\caption{Bảng trung gian BOOK\_AUTHOR}
+\begin{tabular}{@{}|l|l|p{6cm}|l|@{}}
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} & \textbf{Ràng buộc} \\ \hline
+\attr{BookID} & INT & Khóa ngoại tham chiếu BOOK & PK, FK \\ \hline
+\attr{AuthorID} & INT & Khóa ngoại tham chiếu AUTHOR & PK, FK \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ràng buộc:} PRIMARY KEY (\attr{BookID}, \attr{AuthorID}) - Khóa chính kép
+
+\subsection{Sơ đồ Thực thể - Mối quan hệ (ERD)}
+
+\subsubsection{Sơ đồ ERD hoàn chỉnh}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=2.5cm and 3cm,
+    entity/.style={rectangle, draw=black, fill=blue!10, very thick, minimum size=1cm, minimum width=2.5cm, align=center},
+    weakentity/.style={rectangle, draw=black, double, fill=yellow!10, very thick, minimum size=1cm, minimum width=2.5cm, align=center},
+    relationship/.style={diamond, draw=black, fill=green!10, very thick, minimum size=1cm, aspect=2, align=center},
+    attribute/.style={ellipse, draw=black, fill=white, thin, minimum width=1.5cm, align=center},
+    pk/.style={attribute, draw=black, fill=yellow!30, very thick}
+]
+
+% Define entities
+\node[entity] (publisher) {\textbf{PUBLISHER}\\ \small PublisherID (PK)\\ \small Name\\ \small Address\\ \small ContactNumber};
+
+\node[entity, below left=of publisher] (book) {\textbf{BOOK}\\ \small BookID (PK)\\ \small ISBN\\ \small Title\\ \small SubjectCategory\\ \small PublicationYear\\ \small PublisherID (FK)};
+
+\node[entity, above left=of book] (author) {\textbf{AUTHOR}\\ \small AuthorID (PK)\\ \small Name\\ \small Nationality\\ \small YearOfBirth};
+
+\node[entity, below right=of book] (bookcopy) {\textbf{BOOK\_COPY}\\ \small CopyID (PK)\\ \small BookID (FK)\\ \small Condition\\ \small Status};
+
+\node[entity, below=of bookcopy] (loan) {\textbf{LOAN}\\ \small LoanID (PK)\\ \small MemberID (FK)\\ \small CopyID (FK)\\ \small BorrowDate\\ \small DueDate\\ \small ReturnDate\\ \small OverdueFine};
+
+\node[entity, right=of loan] (member) {\textbf{MEMBER}\\ \small MemberID (PK)\\ \small Name\\ \small Address\\ \small Phone\\ \small MembershipType};
+
+% Junction table for M:N relationship
+\node[entity, dashed, fill=orange!10, above=of book] (bookauthor) {\textbf{BOOK\_AUTHOR}\\ \small (Junction Table)\\ \small BookID (FK, PK)\\ \small AuthorID (FK, PK)};
+
+% Define relationships
+\node[relationship, below right=0.8cm and 0.2cm of publisher] (publishes) {Publishes\\ 1:N};
+
+\node[relationship, above right=0.5cm and 0.5cm of author] (writes) {Writes\\ M:N};
+
+\node[relationship, below right=0.8cm and 0.2cm of book] (has) {Has\\ 1:N};
+
+\node[relationship, left=0.5cm of loan] (processes) {Processes\\ 1:N};
+
+\node[relationship, above=0.5cm of loan] (records) {Records\\ 1:1};
+
+% Draw relationship lines
+% Publishes: PUBLISHER -> BOOK
+\draw[->, very thick] (publisher) -- (publishes);
+\draw[->, very thick] (publishes) -- (book);
+
+% Writes: AUTHOR <-> BOOK (via BOOK_AUTHOR)
+\draw[->, very thick] (author) -- (writes);
+\draw[->, very thick] (writes) -- (bookauthor);
+\draw[->, very thick, dashed] (bookauthor) -- (book);
+\draw[->, very thick, dashed] (book) -- (bookauthor);
+
+% Has: BOOK -> BOOK_COPY
+\draw[->, very thick] (book) -- (has);
+\draw[->, very thick] (has) -- (bookcopy);
+
+% Processes: MEMBER -> LOAN
+\draw[->, very thick] (member) -- (processes);
+\draw[->, very thick] (processes) -- (loan);
+
+% Records: LOAN -> BOOK_COPY
+\draw[->, very thick] (loan) -- (records);
+\draw[->, very thick] (records) -- (bookcopy);
+
+% Add cardinality labels
+\node[font=\footnotesize, fill=white] at ($(publisher)!0.5!(publishes)$) {1};
+\node[font=\footnotesize, fill=white] at ($(publishes)!0.5!(book)$) {N};
+
+\node[font=\footnotesize, fill=white] at ($(author)!0.5!(writes)$) {M};
+\node[font=\footnotesize, fill=white] at ($(writes)!0.5!(bookauthor)$) {};
+
+\node[font=\footnotesize, fill=white] at ($(book)!0.5!(has)$) {1};
+\node[font=\footnotesize, fill=white] at ($(has)!0.5!(bookcopy)$) {N};
+
+\node[font=\footnotesize, fill=white] at ($(member)!0.5!(processes)$) {1};
+\node[font=\footnotesize, fill=white] at ($(processes)!0.5!(loan)$) {N};
+
+\node[font=\footnotesize, fill=white] at ($(loan)!0.5!(records)$) {1};
+\node[font=\footnotesize, fill=white] at ($(records)!0.5!(bookcopy)$) {1};
+
+% Legend
+\node[draw, fill=white, anchor=south east] at (current bounding box.north east) {
+    \begin{tabular}{@{}cl@{}}
+    \tikz\node[entity, minimum size=0.5cm] {}; & Entity \\
+    \tikz\node[relationship, minimum size=0.5cm] {}; & Relationship \\
+    \tikz\node[entity, dashed, minimum size=0.5cm] {}; & Junction Table \\
+    \end{tabular}
+};
+
+\end{tikzpicture}
+\caption{Sơ đồ Thực thể - Mối quan hệ (ERD) cho hệ thống Quản lý Thư viện}
+\label{fig:erd}
+\end{figure}
+
+\subsubsection{Mô tả chi tiết các mối quan hệ}
+
+\textbf{1. Publishes (1:N) - PUBLISHER đến BOOK}
+\begin{itemize}
+    \item Một nhà xuất bản có thể xuất bản nhiều cuốn sách
+    \item Mỗi cuốn sách được xuất bản bởi đúng một nhà xuất bản
+    \item Ràng buộc: \attr{PublisherID} trong \entity{BOOK} là khóa ngoại tham chiếu đến \entity{PUBLISHER}
+\end{itemize}
+
+\textbf{2. Writes (M:N) - AUTHOR đến BOOK}
+\begin{itemize}
+    \item Một tác giả có thể viết nhiều cuốn sách
+    \item Một cuốn sách có thể có nhiều tác giả
+    \item Cần bảng trung gian \entity{BOOK\_AUTHOR} để quản lý mối quan hệ này
+    \item Bảng \entity{BOOK\_AUTHOR} có khóa chính kép (\attr{BookID}, \attr{AuthorID})
+\end{itemize}
+
+\textbf{3. Has (1:N) - BOOK đến BOOK\_COPY}
+\begin{itemize}
+    \item Một cuốn sách (title) có thể có nhiều bản sao vật lý
+    \item Mỗi bản sao thuộc về một cuốn sách duy nhất
+    \item Ràng buộc: \attr{BookID} trong \entity{BOOK\_COPY} là khóa ngoại tham chiếu đến \entity{BOOK}
+    \item Khi xóa sách, tất cả bản sao cũng bị xóa (ON DELETE CASCADE)
+\end{itemize}
+
+\textbf{4. Processes (1:N) - MEMBER đến LOAN}
+\begin{itemize}
+    \item Một thành viên có thể tạo nhiều giao dịch mượn
+    \item Mỗi giao dịch mượn thuộc về một thành viên
+    \item Ràng buộc: \attr{MemberID} trong \entity{LOAN} là khóa ngoại tham chiếu đến \entity{MEMBER}
+    \item Lưu trữ lịch sử đầy đủ của các giao dịch mượn/trả
+\end{itemize}
+
+\textbf{5. Records (1:1) - LOAN đến BOOK\_COPY}
+\begin{itemize}
+    \item Một giao dịch mượn ghi nhận một bản sao sách cụ thể
+    \item Mỗi bản sao tại một thời điểm chỉ được ghi nhận trong một giao dịch đang hoạt động
+    \item Ràng buộc: \attr{CopyID} trong \entity{LOAN} là khóa ngoại tham chiếu đến \entity{BOOK\_COPY}
+    \item Không thể có hai giao dịch mượn đang hoạt động cho cùng một bản sao
+\end{itemize}
+
+\textbf{Lưu ý về thiết kế:}
+\begin{itemize}
+    \item Thành viên không trực tiếp kết nối đến bản sao sách
+    \item Việc mượn sách được thực hiện thông qua thực thể \entity{LOAN}
+    \item Thiết kế này cho phép lưu trữ đầy đủ thông tin về mỗi lần mượn: ngày mượn, ngày hết hạn, ngày trả, và phí phạt
+    \item Hỗ trợ truy vấn lịch sử mượn của thành viên và thống kê báo cáo
+\end{itemize}
+
+\subsubsection{Các quyết định thiết kế chính}
+
+\textbf{1. Tách BOOK và BOOK\_COPY:}
+\begin{itemize}
+    \item \entity{BOOK} lưu thông tin chung về title/ISBN
+    \item \entity{BOOK\_COPY} lưu thông tin về từng bản sao vật lý
+    \item Giúp quản lý chính xác số lượng sách có sẵn
+\end{itemize}
+
+\textbf{2. Sử dụng bảng trung gian BOOK\_AUTHOR:}
+\begin{itemize}
+    \item Hỗ trợ mối quan hệ M:N giữa \entity{AUTHOR} và \entity{BOOK}
+    \item Cho phép một sách có nhiều tác giả
+    \item Cho phép một tác giả có nhiều sách
+\end{itemize}
+
+\textbf{3. Tách LOAN thành thực thể riêng:}
+\begin{itemize}
+    \item Lưu trữ đầy đủ thông tin về mỗi giao dịch mượn
+    \item Hỗ trợ tính toán phí phạt
+    \item Lưu trữ lịch sử mượn/trả đầy đủ
+\end{itemize}
+
+\subsection{Kết luận báo cáo 1}
+
+\subsubsection{Tổng kết kết quả}
+
+Báo cáo 1 đã hoàn thành phân tích và thiết kế sơ đồ ERD cho hệ thống quản lý thư viện:
+
+\textbf{1. Xác định được 6 thực thể chính:}
+\begin{itemize}
+    \item \entity{BOOK} - 6 thuộc tính
+    \item \entity{AUTHOR} - 4 thuộc tính
+    \item \entity{PUBLISHER} - 4 thuộc tính
+    \item \entity{BOOK\_COPY} - 4 thuộc tính
+    \item \entity{MEMBER} - 5 thuộc tính
+    \item \entity{LOAN} - 7 thuộc tính
+\end{itemize}
+
+\textbf{2. Xác định được 5 mối quan hệ:}
+\begin{itemize}
+    \item Publishes (1:N) - \entity{PUBLISHER} → \entity{BOOK}
+    \item Writes (M:N) - \entity{AUTHOR} ↔ \entity{BOOK} (qua \entity{BOOK\_AUTHOR})
+    \item Has (1:N) - \entity{BOOK} → \entity{BOOK\_COPY}
+    \item Processes (1:N) - \entity{MEMBER} → \entity{LOAN}
+    \item Records (1:1) - \entity{LOAN} → \entity{BOOK\_COPY}
+\end{itemize}
+
+\textbf{Lưu ý về thiết kế quan hệ:}
+\begin{itemize}
+    \item Việc mượn sách được mô hình hóa thông qua thực thể \entity{LOAN}, không phải quan hệ trực tiếp giữa \entity{MEMBER} và \entity{BOOK\_COPY}
+    \item Thành viên tạo giao dịch \entity{LOAN}, và giao dịch đó ghi nhận bản sao sách được mượn
+    \item Thiết kế này cho phép lưu trữ đầy đủ thông tin về mỗi lần mượn và theo dõi lịch sử
+\end{itemize}
+
+\textbf{3. Xác định được 1 bảng trung gian:}
+\begin{itemize}
+    \item \entity{BOOK\_AUTHOR} - quản lý mối quan hệ nhiều-nhiều
+\end{itemize}
+
+\subsubsection{Chuẩn bị cho báo cáo 2}
+
+Báo cáo 2 sẽ chuyển đổi sơ đồ ERD sang mô hình quan hệ (Relational Data Model) và thực hiện:
+\begin{enumerate}
+    \item Chuyển đổi thực thể thành bảng (tables)
+    \item Xác định khóa chính và khóa ngoại
+    \item Xác định các lược đồ quan hệ (relation schemas)
+    \item Nhận dạng các mẫu không chuẩn hóa
+    \item Chuẩn bị cho quá trình chuẩn hóa trong báo cáo 3
+\end{enumerate}
+
+\subsubsection{Đánh giá chất lượng thiết kế}
+
+\begin{itemize}
+    \item \textbf{Tính đầy đủ:} Tất cả các thực thể và mối quan hệ cần thiết đã được xác định
+    \item \textbf{Tính chính xác:} Bội số và các ràng buộc được xác định đúng theo yêu cầu
+    \item \textbf{Tính rõ ràng:} Sơ đồ ERD thể hiện rõ cấu trúc dữ liệu
+    \item \textbf{Khả năng mở rộng:} Thiết kế cho phép thêm các thực thể mới trong tương lai
+\end{itemize}
+
+%===========================================================
+% REFERENCES
+%===========================================================
+\newpage
+\section*{TÀI LIỆU THAM KHẢO}
+
+\begin{enumerate}
+    \item Silberschatz, A., Korth, H. F., \& Sudarshan, S. (2019). \textit{Database System Concepts} (7th ed.). McGraw-Hill Education.
+    \item Elmasri, R., \& Navathe, S. B. (2015). \textit{Fundamentals of Database Systems} (7th ed.). Pearson.
+    \item Microsoft Documentation. (2025). \textit{SQL Server Documentation}. Retrieved from https://docs.microsoft.com/sql
+    \item Course Materials - DBI202 - FPT University
+    \item GeeksforGeeks. (2025). \textit{ER Diagram of Library Management System}. Retrieved from https://www.geeksforgeeks.org
+\end{enumerate}
+
+\vspace{2cm}
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}
+
+\textbf{KẾT THÚC BÁO CÁO 1}\\
+\vspace{0.5cm}
+\textit{Người thực hiện: Nhóm 3 - Lớp SE2043}\\
+\textit{Ngày hoàn thành: 26/01/2026}\\
+\textit{Giảng viên hướng dẫn: Vũ Thanh Phong}
+\end{center}
+
+\end{document}
