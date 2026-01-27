@@ -13,9 +13,3 @@ settings.local.json
 _bmad/
 .agent/
 
-latex/
-!latex/main.pdf
-!latex/main.tex
-!latex/main.pdf
-!latex/run.cmd
-!latex/auto_build.bat
