@@ -111,9 +111,14 @@
 \begin{document}
 
 %===========================================================
-% TITLE PAGE WITH FRAME (KHUNG TRANG BÌA)
+% TITLE PAGE WITH FRAME (KHUNG TRANG BÌA CHUẨN)
 %===========================================================
 \begin{titlepage}
+    % --- BƯỚC 1: Ép lề trang này khớp với khung ---
+    % Khung vẽ: Trái 3cm, Phải 2cm. 
+    % Ta set lề văn bản: Trái 3.5cm, Phải 2.5cm (thụt vào 0.5cm so với khung để không dính nét vẽ)
+    \newgeometry{left=3.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
     \begin{tikzpicture}[overlay,remember picture]
         % Khung viền đậm bên ngoài
         \draw [line width=3pt]
@@ -127,18 +132,18 @@
             ($ (current page.south east) + (-2.15cm,2.15cm) $);
     \end{tikzpicture}
 
-    \centering
+    \centering % Lệnh này sẽ canh giữa toàn bộ nội dung theo lề mới
     \vspace{0.5cm}
     
     % Tên trường
     {\large \textbf{ĐẠI HỌC FPT}}\\
     {\large \textbf{FPT UNIVERSITY}}
     
-    \vspace{2cm}
+    \vspace{1.5cm}
     
-    % Logo trường (Nếu chị có file logo thì bỏ comment dòng dưới và sửa tên file)
-    % \includegraphics[width=4cm]{logo_fpt.png} 
-    % \vspace{1cm}
+    % Logo trường
+    \includegraphics[width=4cm]{images/logo.png} 
+    \vspace{1cm}
 
     % Tên bài báo cáo
     {\Large \textbf{BÁO CÁO MÔN HỌC}}\\
@@ -146,38 +151,40 @@
     {\Huge \textbf{XÂY DỰNG HỆ THỐNG CSDL\\ QUẢN LÝ THƯ VIỆN}}
     \vspace{0.5cm}
     
-    % Tên tiếng Anh (Optional)
+    % Tên tiếng Anh
     {\large \textbf{(BUILDING A DATABASE SYSTEM FOR\\ LIBRARY MANAGEMENT)}}
 
-    \vspace{2cm}
+    \vspace{1.5cm}
 
-    % Thông tin môn học
-    \begin{tabular}{l l}
+    % Thông tin môn học (Dùng bảng để thẳng hàng nhưng vẫn canh giữa trang)
+    \begin{tabular}{r l} % r l : Cột trái canh phải, cột phải canh trái -> Tạo hiệu ứng đẹp ở giữa
         \textbf{MÔN HỌC:} & HỆ THỐNG CƠ SỞ DỮ LIỆU \\
         \textbf{MÃ MÔN:}  & DBI202 \\
         \textbf{LỚP:}     & SE2043 \\
     \end{tabular}
 
-    \vspace{2cm}
+    \vspace{1.5cm}
 
-    % Thông tin GVHD và Nhóm SV (Dùng minipage để căn phải đẹp hơn)
-    \begin{flushright}
-        \begin{minipage}{0.6\textwidth}
-            \textbf{GIẢNG VIÊN HƯỚNG DẪN:}\\
-            TS. VŨ THANH PHONG
-            \vspace{0.5cm}
-            
-            \textbf{NHÓM THỰC HIỆN (NHÓM 3):}\\
-            \begin{tabular}{@{}l l@{}}
-            1. & Nguyễn Ngọc Phúc \\
-            2. & Thân Nhật Huy \\
-            3. & Võ Hoàng Đình Trường \\ 
-            4. & Nguyễn Thành An \\
-            5. & Nguyễn Quang Thiên Phú \\
-            6. & Phạm Ngọc Hưng \\
-            \end{tabular}
-        \end{minipage}
-    \end{flushright}
+    % --- BƯỚC 2: Canh giữa phần thông tin nhóm ---
+    % Bỏ flushright, dùng centering trong minipage
+    \begin{minipage}{0.8\textwidth} % Rộng 80% trang để dễ canh
+        \centering
+        \textbf{GIẢNG VIÊN HƯỚNG DẪN:}\\
+        TS. VŨ THANH PHONG
+        \vspace{0.5cm}
+        
+        \textbf{NHÓM THỰC HIỆN (NHÓM 3):}\\
+        \vspace{0.2cm}
+        % Bảng danh sách sinh viên
+        \begin{tabular}{l l} 
+        1. & Nguyễn Ngọc Phúc \\
+        2. & Thân Nhật Huy \\
+        3. & Võ Hoàng Đình Trường \\ 
+        4. & Nguyễn Thành An \\
+        5. & Nguyễn Quang Thiên Phú \\
+        6. & Phạm Ngọc Hưng \\
+        \end{tabular}
+    \end{minipage}
 
     \vfill
 
@@ -185,6 +192,8 @@
     \textbf{TP. HỒ CHÍ MINH, THÁNG 01 NĂM 2026}
     \vspace{1cm}
 
+    % --- BƯỚC 3: Trả lại lề chuẩn cho các trang sau ---
+    \restoregeometry
 \end{titlepage}
 
 %===========================================================
@@ -510,7 +519,7 @@ Many-to-Many (N:M) & Nhiều bản ghi của A liên kết với nhiều bản g
 
 Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \textbf{6 thực thể chính} cần quản lý trong hệ thống thư viện:
 
-\subsubsection{1. BOOK (SÁCH)}
+\subsubsection{BOOK (SÁCH)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin về các cuốn sách trong thư viện
 
@@ -529,7 +538,7 @@ Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \te
 \end{tabular}
 \end{table}
 
-\subsubsection{2. AUTHOR (TÁC GIẢ)}
+\subsubsection{AUTHOR (TÁC GIẢ)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin cá nhân về các tác giả của sách
 
@@ -546,7 +555,7 @@ Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \te
 \end{tabular}
 \end{table}
 
-\subsubsection{3. PUBLISHER (NHÀ XUẤT BẢN)}
+\subsubsection{PUBLISHER (NHÀ XUẤT BẢN)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin về các nhà xuất bản
 
@@ -563,7 +572,7 @@ Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \te
 \end{tabular}
 \end{table}
 
-\subsubsection{4. BOOK\_COPY (BẢN SAO SÁCH)}
+\subsubsection{BOOK\_COPY (BẢN SAO SÁCH)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin về từng bản sao vật lý của sách
 
@@ -586,7 +595,7 @@ Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \te
     \item \attr{Status}: Available (Sẵn sàng), Borrowed (Đang mượn), Maintenance (Bảo dưỡng), Lost (Mất)
 \end{itemize}
 
-\subsubsection{5. MEMBER (THÀNH VIÊN)}
+\subsubsection{MEMBER (THÀNH VIÊN)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin về thành viên thư viện
 
@@ -606,7 +615,7 @@ Sau khi phân tích yêu cầu bài toán, chúng tôi xác định được \te
 
 \textbf{Ghi thích:} \attr{MembershipType}: Student (Sinh viên), Faculty (Giảng viên), Standard (Thông thường), Premium (VIP)
 
-\subsubsection{6. LOAN (MƯỢN/TRẢ)}
+\subsubsection{LOAN (MƯỢN/TRẢ)}
 
 \textbf{Mô tả thực thể:} Lưu trữ thông tin về các giao dịch mượn/trả sách
 
