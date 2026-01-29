@@ -4,6 +4,10 @@
 \documentclass[12pt,a4paper]{article}
 
 \usepackage[inkscapelatex=false]{svg}
+\usepackage{indentfirst}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
 
 %===========================================================
 % PACKAGES FOR VIETNAMESE SUPPORT AND FORMATTING
@@ -107,46 +111,80 @@
 \begin{document}
 
 %===========================================================
-% TITLE PAGE
+% TITLE PAGE WITH FRAME (KHUNG TRANG BÌA)
 %===========================================================
 \begin{titlepage}
+    \begin{tikzpicture}[overlay,remember picture]
+        % Khung viền đậm bên ngoài
+        \draw [line width=3pt]
+            ($ (current page.north west) + (3.0cm,-2.0cm) $)
+            rectangle
+            ($ (current page.south east) + (-2.0cm,2.0cm) $);
+        % Khung viền mảnh bên trong
+        \draw [line width=1pt]
+            ($ (current page.north west) + (3.15cm,-2.15cm) $)
+            rectangle
+            ($ (current page.south east) + (-2.15cm,2.15cm) $);
+    \end{tikzpicture}
+
     \centering
-    \vspace*{1cm}
-
-    % University Logo (if available)
-    %\includegraphics[width=3cm]{fpt_logo.png}
     \vspace{0.5cm}
+    
+    % Tên trường
+    {\large \textbf{ĐẠI HỌC FPT}}\\
+    {\large \textbf{FPT UNIVERSITY}}
+    
+    \vspace{2cm}
+    
+    % Logo trường (Nếu chị có file logo thì bỏ comment dòng dưới và sửa tên file)
+    % \includegraphics[width=4cm]{logo_fpt.png} 
+    % \vspace{1cm}
 
-    {\Huge\bfseries ĐẠI HỌC FPT}\\
-    {\Huge\bfseries FPT UNIVERSITY}\\[1cm]
+    % Tên bài báo cáo
+    {\Large \textbf{BÁO CÁO MÔN HỌC}}\\
+    \vspace{0.5cm}
+    {\Huge \textbf{XÂY DỰNG HỆ THỐNG CSDL\\ QUẢN LÝ THƯ VIỆN}}
+    \vspace{0.5cm}
+    
+    % Tên tiếng Anh (Optional)
+    {\large \textbf{(BUILDING A DATABASE SYSTEM FOR\\ LIBRARY MANAGEMENT)}}
 
-    {\Large\textbf{CHỦ ĐỀ:}}\\[0.3cm]
-    {\huge\bfseries XÂY DỰNG HỆ THỐNG CSDL\\ QUẢN LÝ THƯ VIỆN}\\[0.5cm]
-    {\Large BUILDING A DATABASE SYSTEM FOR\\ LIBRARY MANAGEMENT}\\[2cm]
+    \vspace{2cm}
 
-    {\Large\textbf{MÔN HỌC:} HỆ THỐNG CƠ SỞ DỮ LIỆU}\\[0.3cm]
-    {\Large\textbf{COURSE:} DATABASE SYSTEMS (DBI202)}\\[0.3cm]
-    {\Large\textbf{LỚP:} SE2043}\\[2cm]
+    % Thông tin môn học
+    \begin{tabular}{l l}
+        \textbf{MÔN HỌC:} & HỆ THỐNG CƠ SỞ DỮ LIỆU \\
+        \textbf{MÃ MÔN:}  & DBI202 \\
+        \textbf{LỚP:}     & SE2043 \\
+    \end{tabular}
 
-    \begin{flushleft}
-        {\Large\textbf{GIẢNG VIÊN HƯỚNG DẪN:}}\\
-        {\Large VŨ THANH PHONG}\\[1cm]
+    \vspace{2cm}
 
-        {\Large\textbf{NHÓM 2}}\\[0.5cm]
-
-        \begin{tabular}{@{}ll@{}}
-        1.  & Nguyễn Ngọc Phúc \\
-        2.  & Thân Nhật Huy \\
-        3.  & Võ Hoàng Đình Trường \\ 
-        4.  & Nguyễn Thành An \\
-        5.  & Nguyễn Quang Thiên Phú \\
-        6.  & Phạm Ngọc Hưng  \\
-        \end{tabular}
-    \end{flushleft}
+    % Thông tin GVHD và Nhóm SV (Dùng minipage để căn phải đẹp hơn)
+    \begin{flushright}
+        \begin{minipage}{0.6\textwidth}
+            \textbf{GIẢNG VIÊN HƯỚNG DẪN:}\\
+            TS. VŨ THANH PHONG
+            \vspace{0.5cm}
+            
+            \textbf{NHÓM THỰC HIỆN (NHÓM 3):}\\
+            \begin{tabular}{@{}l l@{}}
+            1. & Nguyễn Ngọc Phúc \\
+            2. & Thân Nhật Huy \\
+            3. & Võ Hoàng Đình Trường \\ 
+            4. & Nguyễn Thành An \\
+            5. & Nguyễn Quang Thiên Phú \\
+            6. & Phạm Ngọc Hưng \\
+            \end{tabular}
+        \end{minipage}
+    \end{flushright}
 
     \vfill
 
-    {\large\today}
+    % Ngày tháng
+    \textbf{TP. HỒ CHÍ MINH, THÁNG 01 NĂM 2026}
+    \vspace{1cm}
+
 \end{titlepage}
 
 %===========================================================
@@ -657,19 +695,18 @@ Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều
 % https://dbdiagram.io/d/dbi-697adba5bd82f5fce2f72136
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{images/erd_diagram.pdf}
+\includegraphics[width=\textwidth]{images/Library_Management_ERD_hinhthoi.drawio.png}
 \caption{Sơ đồ Thực thể - Mối quan hệ (ERD) cho hệ thống Quản lý Thư viện}
 \label{fig:erd}
 \end{figure}
 
-\textbf{Giải thích các mối quan hệ chính:}
-\begin{enumerate}
-\item \textbf{PUBLISHER (1) --- (N) BOOK:} Một nhà xuất bản xuất bản nhiều sách
-\item \textbf{AUTHOR (M) --- (N) BOOK:} Mối quan hệ nhiều-nhiều thông qua bảng trung gian BOOK\_AUTHOR
-\item \textbf{BOOK (1) --- (N) BOOK\_COPY:} Một đầu sách có nhiều bản sao vật lý
-\item \textbf{MEMBER (1) --- (N) LOAN:} Một thành viên có thể có nhiều giao dịch mượn
-\item \textbf{BOOK\_COPY (1) --- (N) LOAN:} Một bản sao có thể được mượn nhiều lần theo thời gian
-\end{enumerate}
+\textbf{Chú thích ký hiệu trong sơ đồ:}
+\begin{itemize}
+\item \textcolor{\textbf{Khóa chính (Primary Key - PK):}} -Được viết bằng chữ màu đỏ và gạch chân (Ví dụ: BookID, AuthorID, LoanID).
+\item \textcolor{\textbf{Khóa ngoại (Foreign Key - FK):}} -Được viết bằng chữ màu xanh dương và in nghiêng (Ví dụ: PublisherID trong bảng BOOK, MemberID trong bảng LOAN).
+\item \textcolor{\textbf{Khóa chính vừa là Khóa ngoại (PK, FK):}} -Được viết bằng chữ màu tím, vừa gạch chân vừa in nghiêng.
+\end{itemize}
+
 
 \subsubsection{Mô tả chi tiết các mối quan hệ}
 
@@ -722,28 +759,26 @@ Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều
 
 \subsubsection{Các quyết định thiết kế chính}
 
-\begin{enumerate}
-  \item \textbf{Tách BOOK và BOOK\_COPY:}
-  \begin{itemize}
+\textbf{1. Tách BOOK và BOOK\_COPY:}
+\begin{itemize}
     \item \entity{BOOK} lưu thông tin chung về title/ISBN
     \item \entity{BOOK\_COPY} lưu thông tin về từng bản sao vật lý
     \item Giúp quản lý chính xác số lượng sách có sẵn
-  \end{itemize}
+\end{itemize}
 
-  \item \textbf{Sử dụng bảng trung gian BOOK\_AUTHOR:}
-  \begin{itemize}
+\textbf{2. Sử dụng bảng trung gian BOOK\_AUTHOR:}
+\begin{itemize}
     \item Hỗ trợ mối quan hệ M:N giữa \entity{AUTHOR} và \entity{BOOK}
     \item Cho phép một sách có nhiều tác giả
     \item Cho phép một tác giả có nhiều sách
-  \end{itemize}
+\end{itemize}
 
-  \item \textbf{Tách LOAN thành thực thể riêng:}
-  \begin{itemize}
+\textbf{3. Tách LOAN thành thực thể riêng:}
+\begin{itemize}
     \item Lưu trữ đầy đủ thông tin về mỗi giao dịch mượn
     \item Hỗ trợ tính toán phí phạt
     \item Lưu trữ lịch sử mượn/trả đầy đủ
-  \end{itemize}
-\end{enumerate}
+\end{itemize}
 
 \subsection{Kết luận báo cáo 1}
 
