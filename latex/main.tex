@@ -722,26 +722,28 @@ Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều
 
 \subsubsection{Các quyết định thiết kế chính}
 
-\textbf{1. Tách BOOK và BOOK\_COPY:}
-\begin{itemize}
+\begin{enumerate}
+  \item \textbf{Tách BOOK và BOOK\_COPY:}
+  \begin{itemize}
     \item \entity{BOOK} lưu thông tin chung về title/ISBN
     \item \entity{BOOK\_COPY} lưu thông tin về từng bản sao vật lý
     \item Giúp quản lý chính xác số lượng sách có sẵn
-\end{itemize}
+  \end{itemize}
 
-\textbf{2. Sử dụng bảng trung gian BOOK\_AUTHOR:}
-\begin{itemize}
+  \item \textbf{Sử dụng bảng trung gian BOOK\_AUTHOR:}
+  \begin{itemize}
     \item Hỗ trợ mối quan hệ M:N giữa \entity{AUTHOR} và \entity{BOOK}
     \item Cho phép một sách có nhiều tác giả
     \item Cho phép một tác giả có nhiều sách
-\end{itemize}
+  \end{itemize}
 
-\textbf{3. Tách LOAN thành thực thể riêng:}
-\begin{itemize}
+  \item \textbf{Tách LOAN thành thực thể riêng:}
+  \begin{itemize}
     \item Lưu trữ đầy đủ thông tin về mỗi giao dịch mượn
     \item Hỗ trợ tính toán phí phạt
     \item Lưu trữ lịch sử mượn/trả đầy đủ
-\end{itemize}
+  \end{itemize}
+\end{enumerate}
 
 \subsection{Kết luận báo cáo 1}
 
