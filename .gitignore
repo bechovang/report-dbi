@@ -13,3 +13,19 @@ settings.local.json
 _bmad/
 .agent/
 
+# ===== LaTeX build files =====
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.xdv

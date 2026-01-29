@@ -1,7 +1,6 @@
 @echo off
 cd /d "%~dp0"
 title LATEX AUTO-BUILD (PowerShell Core)
-color 1E
 
 echo ========================================================
 echo   HE THONG TU DONG BIEN DICH LATEX (CHE DO WATCH)
