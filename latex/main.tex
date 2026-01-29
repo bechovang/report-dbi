@@ -71,13 +71,26 @@
 % TITLE FORMATTING
 %===========================================================
 \titleformat{\section}
-  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+  {\normalfont\LARGE\bfseries}{\thesection.}{0.5em}{\MakeUppercase}
 
 \titleformat{\subsection}
-  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+  {\normalfont\Large\bfseries}{\thesubsection.}{0.5em}{}
 
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+  {\normalfont\large\bfseries}{\thesubsubsection.}{0.5em}{}
+
+\titleformat{\paragraph}
+  {\normalfont\normalsize\bfseries}{\theparagraph.}{0.5em}{}
+
+\titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{3ex plus 1ex minus .2ex}{1.8ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{2.5ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\paragraph}{0pt}{2ex plus .5ex minus .2ex}{1em}
+
+% Định dạng số thứ tự rõ ràng
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
 %===========================================================
 % CUSTOM COMMANDS
