@@ -3,11 +3,18 @@
 
 \documentclass[12pt,a4paper]{article}
 
+% thêm svg vào, nhưng khó dùng, chưa sài
 \usepackage[inkscapelatex=false]{svg}
-\usepackage{indentfirst}
 
+% cho dòng đầu thụt vào
+\usepackage{indentfirst} 
+
+% vẽ khung cho trang bìa
 \usepackage{tikz}
 \usetikzlibrary{calc}
+
+% Gói để xoay ngang trang PDF
+\usepackage{pdflscape} 
 
 %===========================================================
 % PACKAGES FOR VIETNAMESE SUPPORT AND FORMATTING
@@ -698,22 +705,24 @@ Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều
 
 \textbf{Ràng buộc:} PRIMARY KEY (\attr{BookID}, \attr{AuthorID}) - Khóa chính kép
 
+% \begin{landscape} % Bắt đầu xoay ngang trang này
 \subsection{Sơ đồ Thực thể - Mối quan hệ (ERD)}
 
 \subsubsection{Sơ đồ ERD hoàn chỉnh}
 % https://dbdiagram.io/d/dbi-697adba5bd82f5fce2f72136
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{images/Library_Management_ERD_hinhthoi.drawio.png}
+\includegraphics[width=\textwidth]{images/Library_Management_ERD_hinhthoi.drawio.pdf}
 \caption{Sơ đồ Thực thể - Mối quan hệ (ERD) cho hệ thống Quản lý Thư viện}
 \label{fig:erd}
 \end{figure}
+% \end{landscape} % Kết thúc xoay ngang, trang sau sẽ tự về dọc lại
 
 \textbf{Chú thích ký hiệu trong sơ đồ:}
 \begin{itemize}
-\item \textcolor{\textbf{Khóa chính (Primary Key - PK):}} -Được viết bằng chữ màu đỏ và gạch chân (Ví dụ: BookID, AuthorID, LoanID).
-\item \textcolor{\textbf{Khóa ngoại (Foreign Key - FK):}} -Được viết bằng chữ màu xanh dương và in nghiêng (Ví dụ: PublisherID trong bảng BOOK, MemberID trong bảng LOAN).
-\item \textcolor{\textbf{Khóa chính vừa là Khóa ngoại (PK, FK):}} -Được viết bằng chữ màu tím, vừa gạch chân vừa in nghiêng.
+\item Khóa chính (Primary Key - PK): Được viết bằng chữ màu đỏ và gạch chân (Ví dụ: BookID, AuthorID, LoanID).
+\item Khóa ngoại (Foreign Key - FK): Được viết bằng chữ màu xanh dương và in nghiêng (Ví dụ: PublisherID trong bảng BOOK, MemberID trong bảng LOAN).
+\item Khóa chính vừa là Khóa ngoại (PK, FK): -Được viết bằng chữ màu tím, vừa gạch chân vừa in nghiêng.
 \end{itemize}
 
 
