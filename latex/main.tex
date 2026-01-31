@@ -856,6 +856,729 @@ Báo cáo 2 sẽ chuyển đổi sơ đồ ERD sang mô hình quan hệ (Relatio
 \end{itemize}
 
 %===========================================================
+% SECTION 2: REPORT 2 - RELATIONAL MODEL DESIGN
+%===========================================================
+\newpage
+\section{BÁO CÁO 2: MÔ HÌNH QUAN HỆ (RELATIONAL DATA MODEL)}
+
+\subsection{Giới thiệu báo cáo 2}
+
+Báo cáo 2 là bước tiếp theo trong quá trình thiết kế cơ sở dữ liệu, chuyển đổi từ sơ đồ Thực thể - Mối quan hệ (ERD) đã hoàn thiện trong Báo cáo 1 sang \textbf{Mô hình Quan hệ (Relational Data Model)}. Đây là bước quan trọng để chuẩn bị cho quá trình chuẩn hóa dữ liệu trong Báo cáo 3.
+
+\textbf{Mục tiêu của Báo cáo 2:}
+\begin{itemize}
+    \item Chuyển đổi các thực thể (entities) thành các bảng (tables/relation schemas)
+    \item Xác định khóa chính (Primary Keys) và khóa ngoại (Foreign Keys)
+    \item Thiết lập các mối quan hệ giữa các bảng thông qua khóa ngoại
+    \item Xác định các phụ thuộc hàm (Functional Dependencies)
+    \item Nhận dạng các mẫu chưa chuẩn hóa để chuẩn bị cho chuẩn hóa 3NF
+\end{itemize}
+
+\subsection{Cơ sở lý thuyết}
+
+\subsubsection{Mô hình Quan hệ (Relational Model)}
+
+\textbf{Định nghĩa:} Mô hình quan hệ là một mô hình cơ sở dữ liệu thể hiện dữ liệu dưới dạng các quan hệ (relations), mà người dùng có thể nhận thức dưới dạng các bảng (tables) gồm các hàng (rows) và cột (columns).
+
+\textbf{Các thành phần cơ bản:}
+
+\begin{table}[H]
+\centering
+\caption{Thành phần của Mô hình Quan hệ}
+\begin{tabular}{@{}|l|p{9cm}|@{}}
+\hline
+\textbf{Thành phần} & \textbf{Mô tả} \\ \hline
+\textbf{Relation (Quan hệ)} & Một bảng 2D chứa dữ liệu, tương ứng với một thực thể trong ERD \\ \hline
+\textbf{Tuple (Bộ)} & Một hàng trong bảng, tương ứng với một bản ghi hoặc một thể hiện của thực thể \\ \hline
+\textbf{Attribute (Thuộc tính)} & Một cột trong bảng, tương ứng với một thuộc tính của thực thể \\ \hline
+\textbf{Domain (Miền giá trị)} & Tập hợp các giá trị hợp lệ cho một thuộc tính \\ \hline
+\textbf{Degree (Bậc)} & Số lượng thuộc tính trong một quan hệ \\ \hline
+\textbf{Cardinality (Độ)} & Số lượng bộ trong một quan hệ \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Khóa chính (Primary Key)}
+
+\textbf{Định nghĩa:} Khóa chính là một thuộc tính hoặc tập hợp các thuộc tính định danh duy nhất mỗi bộ trong một quan hệ.
+
+\textbf{Đặc điểm:}
+\begin{itemize}
+    \item \textbf{Tính duy nhất:} Không có hai bộ nào có cùng giá trị khóa chính
+    \item \textbf{Tính không rỗng:} Khóa chính không thể chứa giá trị NULL
+    \item \textbf{Tính ổn định:} Giá trị khóa chính không nên thay đổi
+\end{itemize}
+
+\textbf{Ký hiệu:} Gạch dưới thuộc tính (ví dụ: \underline{BookID}) hoặc ký hiệu PK
+
+\subsubsection{Khóa ngoại (Foreign Key)}
+
+\textbf{Định nghĩa:} Khóa ngoại là một thuộc tính trong một quan hệ tham chiếu đến khóa chính của một quan hệ khác, thiết lập mối quan hệ giữa hai bảng.
+
+\textbf{Đặc điểm:}
+\begin{itemize}
+    \item \textbf{Tham chiếu:} Giá trị khóa ngoại phải khớp với giá trị khóa chính được tham chiếu, hoặc là NULL
+    \item \textbf{Tính toàn vẹn:} Đảm bảo tính toàn vẹn tham chiếu (Referential Integrity)
+    \item \textbf{Hành vi cascade:} Xác định điều gì xảy ra khi dữ liệu được tham chiếu bị xóa hoặc cập nhật
+\end{itemize}
+
+\textbf{Ký hiệu:} Chỉ mũi tên từ khóa ngoại sang khóa chính được tham chiếu
+
+\subsubsection{Phụ thuộc hàm (Functional Dependency)}
+
+\textbf{Định nghĩa:} Phụ thuộc hàm là một ràng buộc giữa hai tập hợp thuộc tính trong một quan hệ. Được ký hiệu là $X \rightarrow Y$, đọc là "X xác định Y" hoặc "Y phụ thuộc hàm vào X".
+
+\textbf{Định nghĩa toán học:} Trong một quan hệ R, $X \rightarrow Y$ nếu và chỉ nếu mỗi giá trị của X liên kết với chính xác một giá trị của Y.
+
+\textbf{Ví dụ:}
+\begin{itemize}
+    \item \texttt{BookID} $\rightarrow$ \texttt{Title}: Mã sách xác định tên sách
+    \item \texttt{BookID} $\rightarrow$ \texttt{ISBN, PublicationYear, PublisherID}
+    \item \texttt{MemberID} $\rightarrow$ \texttt{Name, Address, Phone}
+\end{itemize}
+
+\subsection{Quy tắc chuyển đổi từ ERD sang Mô hình Quan hệ}
+
+\subsubsection{Quy tắc cơ bản}
+
+\begin{table}[H]
+\centering
+\caption{Quy tắc chuyển đổi ERD sang Relational Model}
+\begin{tabular}{@{}|l|p{9cm}|@{}}
+\hline
+\textbf{Thành phần ERD} & \textbf{Quy tắc chuyển đổi} \\ \hline
+\textbf{Thực thể mạnh} & Chuyển thành một bảng (table) riêng biệt \\ \hline
+\textbf{Thuộc tính} & Chuyển thành cột (column) của bảng \\ \hline
+\textbf{Khóa chính} & Chuyển thành PRIMARY KEY constraint \\ \hline
+\textbf{Quan hệ 1:1} & Thêm khóa ngoại vào một trong hai bảng, thường là bảng có tham gia bắt buộc \\ \hline
+\textbf{Quan hệ 1:N} & Thêm khóa ngoại vào bảng "N" (bên nhiều) tham chiếu đến bảng "1" (bên một) \\ \hline
+\textbf{Quan hệ M:N} & Tạo bảng trung gian (junction table) với hai khóa ngoại \\ \hline
+\textbf{Thực thể yếu} & Thêm khóa ngoại tham chiếu đến thực thể sở hữu, có thể tạo khóa chính kép \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Quy tắc chi tiết cho từng loại quan hệ}
+
+\textbf{1. Quan hệ Một-Nhiều (1:N):}
+
+\begin{itemize}
+    \item Bên "1": Thực thể có khóa chính PK
+    \item Bên "N": Thêm thuộc tính khóa ngoại FK tham chiếu đến PK của bên "1"
+    \item \textbf{Ví dụ:} \entity{PUBLISHER} (1) $\rightarrow$ \entity{BOOK} (N)
+    \item \entity{BOOK} có \attr{PublisherID} là khóa ngoại tham chiếu đến \entity{PUBLISHER}
+\end{itemize}
+
+\textbf{2. Quan hệ Nhiều-Nhiều (M:N):}
+
+\begin{itemize}
+    \item Tạo bảng trung gian mới
+    \item Bảng trung gian có hai khóa ngoại FK tham chiếu đến PK của hai thực thể
+    \item Khóa chính của bảng trung gian là kết hợp của hai khóa ngoại
+    \item \textbf{Ví dụ:} \entity{AUTHOR} (M) $\leftrightarrow$ \entity{BOOK} (N)
+    \item Tạo \entity{BOOK\_AUTHOR} với PK (\attr{BookID}, \attr{AuthorID})
+\end{itemize}
+
+\textbf{3. Quan hệ Một-Một (1:1):}
+
+\begin{itemize}
+    \item Thêm khóa ngoại vào một trong hai bảng
+    \item Khóa ngoại vừa là khóa ngoại vừa là khóa chính
+    \item \textbf{Ví dụ:} \entity{LOAN} (1) $\leftrightarrow$ \entity{BOOK\_COPY} (1)
+    \item \entity{LOAN} có \attr{CopyID} là FK và tham chiếu độc nhất
+\end{itemize}
+
+\subsection{Chuyển đổi ERD sang Lược đồ Quan hệ}
+
+\subsubsection{Lược đồ quan hệ cho các thực thể cơ bản}
+
+\textbf{1. PUBLISHER (Nhà xuất bản)}
+
+$$
+\texttt{PUBLISHER}(\underline{\texttt{PublisherID}}, \texttt{Name}, \texttt{Address}, \texttt{ContactNumber})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ PUBLISHER}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{4}{*}{\texttt{PUBLISHER}} & \multirow{4}{*}{\underline{\texttt{PublisherID}}} & \texttt{PublisherID} & INT \\ \cline{3-4}
+& & \texttt{Name} & VARCHAR(255) \\ \cline{3-4}
+& & \texttt{Address} & VARCHAR(500) \\ \cline{3-4}
+& & \texttt{ContactNumber} & VARCHAR(50) \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{2. AUTHOR (Tác giả)}
+
+$$
+\texttt{AUTHOR}(\underline{\texttt{AuthorID}}, \texttt{Name}, \texttt{Nationality}, \texttt{YearOfBirth})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ AUTHOR}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{4}{*}{\texttt{AUTHOR}} & \multirow{4}{*}{\underline{\texttt{AuthorID}}} & \texttt{AuthorID} & INT \\ \cline{3-4}
+& & \texttt{Name} & VARCHAR(255) \\ \cline{3-4}
+& & \texttt{Nationality} & VARCHAR(100) \\ \cline{3-4}
+& & \texttt{YearOfBirth} & INT \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{3. MEMBER (Thành viên)}
+
+$$
+\texttt{MEMBER}(\underline{\texttt{MemberID}}, \texttt{Name}, \texttt{Address}, \texttt{Phone}, \texttt{MembershipType})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ MEMBER}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{5}{*}{\texttt{MEMBER}} & \multirow{5}{*}{\underline{\texttt{MemberID}}} & \texttt{MemberID} & INT \\ \cline{3-4}
+& & \texttt{Name} & VARCHAR(255) \\ \cline{3-4}
+& & \texttt{Address} & VARCHAR(500) \\ \cline{3-4}
+& & \texttt{Phone} & VARCHAR(20) \\ \cline{3-4}
+& & \texttt{MembershipType} & VARCHAR(50) \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{4. BOOK (Sách)}
+
+$$
+\texttt{BOOK}(\underline{\texttt{BookID}}, \texttt{ISBN}, \texttt{Title}, \texttt{SubjectCategory}, \texttt{PublicationYear}, \texttt{PublisherID})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ BOOK}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{6}{*}{\texttt{BOOK}} & \multirow{6}{*}{\underline{\texttt{BookID}}} & \multirow{3}{*}{\texttt{PublisherID}} & \texttt{BookID} & INT \\ \cline{4-5}
+& & & \texttt{ISBN} & VARCHAR(17) \\ \cline{4-5}
+& & & \texttt{Title} & VARCHAR(255) \\ \cline{4-5}
+& & & \texttt{SubjectCategory} & VARCHAR(100) \\ \cline{4-5}
+& & & \texttt{PublicationYear} & INT \\ \cline{4-5}
+& & & \texttt{PublisherID} & INT \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi chú:}
+\begin{itemize}
+    \item \texttt{PublisherID} là khóa ngoại tham chiếu đến \texttt{PUBLISHER(PublisherID)}
+    \item Ký hiệu: $\texttt{BOOK.PublisherID} \rightarrow \texttt{PUBLISHER.PublisherID}$
+\end{itemize}
+
+\textbf{5. BOOK\_COPY (Bản sao sách)}
+
+$$
+\texttt{BOOK\_COPY}(\underline{\texttt{CopyID}}, \texttt{BookID}, \texttt{Condition}, \texttt{Status})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ BOOK\_COPY}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{4}{*}{\texttt{BOOK\_COPY}} & \multirow{4}{*}{\underline{\texttt{CopyID}}} & \multirow{2}{*}{\texttt{BookID}} & \texttt{CopyID} & INT \\ \cline{4-5}
+& & & \texttt{BookID} & INT \\ \cline{4-5}
+& & & \texttt{Condition} & VARCHAR(50) \\ \cline{4-5}
+& & & \texttt{Status} & VARCHAR(20) \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi chú:}
+\begin{itemize}
+    \item \texttt{BookID} là khóa ngoại tham chiếu đến \texttt{BOOK(BookID)}
+    \item Đây là thực thể yếu (weak entity) phụ thuộc vào \texttt{BOOK}
+    \item Ký hiệu: $\texttt{BOOK\_COPY.BookID} \rightarrow \texttt{BOOK.BookID}$
+\end{itemize}
+
+\textbf{6. LOAN (Mượn/trả)}
+
+$$
+\texttt{LOAN}(\underline{\texttt{LoanID}}, \texttt{MemberID}, \texttt{CopyID}, \texttt{BorrowDate}, \texttt{DueDate}, \texttt{ReturnDate}, \texttt{OverdueFine})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ LOAN}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
+\multirow{7}{*}{\texttt{LOAN}} & \multirow{7}{*}{\underline{\texttt{LoanID}}} & \multirow{2}{*}{\texttt{MemberID}, \texttt{CopyID}} & \texttt{LoanID} & INT \\ \cline{4-5}
+& & & \texttt{MemberID} & INT \\ \cline{4-5}
+& & & \texttt{CopyID} & INT \\ \cline{4-5}
+& & & \texttt{BorrowDate} & DATE \\ \cline{4-5}
+& & & \texttt{DueDate} & DATE \\ \cline{4-5}
+& & & \texttt{ReturnDate} & DATE \\ \cline{4-5}
+& & & \texttt{OverdueFine} & DECIMAL(10,2) \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi chú:}
+\begin{itemize}
+    \item \texttt{MemberID} là khóa ngoại tham chiếu đến \texttt{MEMBER(MemberID)}
+    \item \texttt{CopyID} là khóa ngoại tham chiếu đến \texttt{BOOK\_COPY(CopyID)}
+    \item Ký hiệu:
+    \begin{itemize}
+        \item $\texttt{LOAN.MemberID} \rightarrow \texttt{MEMBER.MemberID}$
+        \item $\texttt{LOAN.CopyID} \rightarrow \texttt{BOOK\_COPY.CopyID}$
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Bảng trung gian cho quan hệ M:N}
+
+\textbf{BOOK\_AUTHOR (Bảng trung gian Sách-Tác giả)}
+
+$$
+\texttt{BOOK\_AUTHOR}(\underline{\texttt{BookID}}, \underline{\texttt{AuthorID}})
+$$
+
+\begin{table}[H]
+\centering
+\caption{Lược đồ quan hệ BOOK\_AUTHOR (Bảng trung gian)}
+\begin{tabular}{@{}|l|l|l|l|@{}}
+\hline
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Mô tả} \\ \hline
+\multirow{2}{*}{\texttt{BOOK\_AUTHOR}} & \multirow{2}{*}{\underline{\texttt{BookID}}, \underline{\texttt{AuthorID}}} & \texttt{BookID} $\rightarrow$ \texttt{BOOK(BookID)} & Khóa ngoại đến BOOK \\ \cline{3-4}
+& & \texttt{AuthorID} $\rightarrow$ \texttt{AUTHOR(AuthorID)} & Khóa ngoại đến AUTHOR \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Ghi chú:}
+\begin{itemize}
+    \item \textbf{Khóa chính kép:} (\texttt{BookID}, \texttt{AuthorID})
+    \item Mỗi cặp (BookID, AuthorID) là duy nhất - một tác giả chỉ được liệt kê một lần cho mỗi sách
+    \item Quan hệ này thể hiện mối quan hệ nhiều-nhiều giữa \texttt{AUTHOR} và \texttt{BOOK}
+\end{itemize}
+
+\subsection{Tổng hợp Lược đồ Quan hệ Hệ Thống}
+
+\subsubsection{Tất cả Lược đồ Quan hệ}
+
+\textbf{Tóm tắt tất cả 7 bảng trong hệ thống:}
+
+$$
+\begin{aligned}
+\texttt{PUBLISHER}(\underline{\texttt{PublisherID}}, \texttt{Name}, \texttt{Address}, \texttt{ContactNumber}) \\
+\texttt{AUTHOR}(\underline{\texttt{AuthorID}}, \texttt{Name}, \texttt{Nationality}, \texttt{YearOfBirth}) \\
+\texttt{MEMBER}(\underline{\texttt{MemberID}}, \texttt{Name}, \texttt{Address}, \texttt{Phone}, \texttt{MembershipType}) \\
+\texttt{BOOK}(\underline{\texttt{BookID}}, \texttt{ISBN}, \texttt{Title}, \texttt{SubjectCategory}, \texttt{PublicationYear}, \texttt{PublisherID}^*) \\
+\texttt{BOOK\_COPY}(\underline{\texttt{CopyID}}, \texttt{BookID}^\dagger, \texttt{Condition}, \texttt{Status}) \\
+\texttt{LOAN}(\underline{\texttt{LoanID}}, \texttt{MemberID}^\ddagger, \texttt{CopyID}^\ddagger, \texttt{BorrowDate}, \texttt{DueDate}, \texttt{ReturnDate}, \texttt{OverdueFine}) \\
+\texttt{BOOK\_AUTHOR}(\underline{\texttt{BookID}^\dagger}, \underline{\texttt{AuthorID}^\ddagger})
+\end{aligned}
+$$
+
+\textbf{Chú thích:}
+\begin{itemize}
+    \item $^*$ \texttt{PublisherID} là khóa ngoại tham chiếu \texttt{PUBLISHER(PublisherID)}
+    \item $^\dagger$ \texttt{BookID} là khóa ngoại tham chiếu \texttt{BOOK(BookID)}
+    \item $^\ddagger$ \texttt{MemberID} là khóa ngoại tham chiếu \texttt{MEMBER(MemberID)}
+    \item $^\ddagger$ \texttt{CopyID} là khóa ngoại tham chiếu \texttt{BOOK\_COPY(CopyID)}
+    \item Dấu gạch dưới ($\underline{\text{...}}$) chỉ Khóa chính (Primary Key)
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Tổng hợp các bảng và khóa}
+\begin{tabular}{@{}|l|l|l|@{}}
+\hline
+\textbf{STT} & \textbf{Tên bảng} & \textbf{Khóa chính (PK)} & \textbf{Khóa ngoại (FK)} \\ \hline
+1 & \texttt{PUBLISHER} & \texttt{PublisherID} & - \\ \hline
+2 & \texttt{AUTHOR} & \texttt{AuthorID} & - \\ \hline
+3 & \texttt{MEMBER} & \texttt{MemberID} & - \\ \hline
+4 & \texttt{BOOK} & \texttt{BookID} & \texttt{PublisherID} $\rightarrow$ \texttt{PUBLISHER} \\ \hline
+5 & \texttt{BOOK\_COPY} & \texttt{CopyID} & \texttt{BookID} $\rightarrow$ \texttt{BOOK} \\ \hline
+6 & \texttt{LOAN} & \texttt{LoanID} & \texttt{MemberID} $\rightarrow$ \texttt{MEMBER} \\
+& & & \texttt{CopyID} $\rightarrow$ \texttt{BOOK\_COPY} \\ \hline
+7 & \texttt{BOOK\_AUTHOR} & \texttt{BookID, AuthorID} & \texttt{BookID} $\rightarrow$ \texttt{BOOK} \\
+& & & \texttt{AuthorID} $\rightarrow$ \texttt{AUTHOR} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Sơ đồ Mô hình Quan hệ (Relational Data Model Diagram)}
+
+% TODO: Insert your RDM diagram here
+% Replace the filename below with your actual diagram file
+\begin{figure}[H]
+\centering
+% \includegraphics[width=\textwidth,keepaspectratio]{images/RDM_Library_Management.pdf}
+% \includegraphics[width=\textwidth,keepaspectratio]{images/RDM_Library_Management.png}
+\caption{Sơ đồ Mô hình Quan hệ (Relational Data Model) cho hệ thống Quản lý Thư viện}
+\label{fig:rdm}
+\end{figure}
+
+\textbf{Ghi chú ký hiệu trong sơ đồ:}
+\begin{itemize}
+\item \textbf{PK (Primary Key):} Khóa chính - được hiển thị ở đầu danh sách cột
+\item \textbf{FK (Foreign Key):} Khóa ngoại - tham chiếu đến bảng khác
+\item \textbf{Đường nối:} Thể hiện mối quan hệ giữa các bảng
+\item \textbf{Bộ ký tự cuối đường:} 1 = một, N = nhiều, M,N = nhiều-nhiều
+\end{itemize}
+
+\subsection{Phụ thuộc Hàm (Functional Dependencies)}
+
+\subsubsection{Định nghĩa và Ký hiệu}
+
+\textbf{Phụ thuộc hàm (Functional Dependency - FD)} mô tả mối quan hệ giữa các thuộc tính trong một bảng. Nếu thuộc tính X xác định thuộc tính Y, ta ký hiệu: $X \rightarrow Y$
+
+\textbf{Ví dụ:} Nếu biết mã sách ($\texttt{BookID}$), ta biết được tên sách ($\texttt{Title}$), ISBN, năm xuất bản, và mã nhà xuất bản. Ký hiệu:
+$$ \texttt{BookID} \rightarrow \texttt{Title, ISBN, PublicationYear, PublisherID} $$
+
+\subsubsection{Các Phụ thuộc Hàm cho từng Bảng}
+
+\textbf{1. Bảng PUBLISHER:}
+
+$$
+\begin{aligned}
+\texttt{PublisherID} &\rightarrow \texttt{Name} \\
+\texttt{PublisherID} &\rightarrow \texttt{Address} \\
+\texttt{PublisherID} &\rightarrow \texttt{ContactNumber}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{PublisherID} \rightarrow \texttt{Name, Address, ContactNumber}$
+
+\textbf{Giải thích:} Mã nhà xuất bản xác định duy nhất tên, địa chỉ và số điện thoại liên hệ của nhà xuất bản đó.
+
+\vspace{0.5cm}
+
+\textbf{2. Bảng AUTHOR:}
+
+$$
+\begin{aligned}
+\texttt{AuthorID} &\rightarrow \texttt{Name} \\
+\texttt{AuthorID} &\rightarrow \texttt{Nationality} \\
+\texttt{AuthorID} &\rightarrow \texttt{YearOfBirth}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{AuthorID} \rightarrow \texttt{Name, Nationality, YearOfBirth}$
+
+\textbf{Giải thích:} Mã tác giả xác định duy nhất tên, quốc tịch và năm sinh của tác giả đó.
+
+\vspace{0.5cm}
+
+\textbf{3. Bảng MEMBER:}
+
+$$
+\begin{aligned}
+\texttt{MemberID} &\rightarrow \texttt{Name} \\
+\texttt{MemberID} &\rightarrow \texttt{Address} \\
+\texttt{MemberID} &\rightarrow \texttt{Phone} \\
+\texttt{MemberID} &\rightarrow \texttt{MembershipType}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{MemberID} \rightarrow \texttt{Name, Address, Phone, MembershipType}$
+
+\textbf{Giải thích:} Mã thành viên xác định duy nhất tên, địa chỉ, số điện thoại và loại thành viên.
+
+\vspace{0.5cm}
+
+\textbf{4. Bảng BOOK:}
+
+$$
+\begin{aligned}
+\texttt{BookID} &\rightarrow \texttt{ISBN} \\
+\texttt{BookID} &\rightarrow \texttt{Title} \\
+\texttt{BookID} &\rightarrow \texttt{SubjectCategory} \\
+\texttt{BookID} &\rightarrow \texttt{PublicationYear} \\
+\texttt{BookID} &\rightarrow \texttt{PublisherID}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{BookID} \rightarrow \texttt{ISBN, Title, SubjectCategory, PublicationYear, PublisherID}$
+
+\textbf{Giải thích:} Mã sách xác định duy nhất ISBN, tên, thể loại, năm xuất bản và mã nhà xuất bản của sách đó.
+
+\vspace{0.5cm}
+
+\textbf{5. Bảng BOOK\_COPY:}
+
+$$
+\begin{aligned}
+\texttt{CopyID} &\rightarrow \texttt{BookID} \\
+\texttt{CopyID} &\rightarrow \texttt{Condition} \\
+\texttt{CopyID} &\rightarrow \texttt{Status}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{CopyID} \rightarrow \texttt{BookID, Condition, Status}$
+
+\textbf{Giải thích:} Mã bản sao xác định duy nhất mã sách mà bản sao thuộc về, tình trạng và trạng thái hiện tại của bản sao.
+
+\vspace{0.5cm}
+
+\textbf{6. Bảng LOAN:}
+
+$$
+\begin{aligned}
+\texttt{LoanID} &\rightarrow \texttt{MemberID} \\
+\texttt{LoanID} &\rightarrow \texttt{CopyID} \\
+\texttt{LoanID} &\rightarrow \texttt{BorrowDate} \\
+\texttt{LoanID} &\rightarrow \texttt{DueDate} \\
+\texttt{LoanID} &\rightarrow \texttt{ReturnDate} \\
+\texttt{LoanID} &\rightarrow \texttt{OverdueFine}
+\end{aligned}
+$$
+
+\textbf{Gộp:} $\texttt{LoanID} \rightarrow \texttt{MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine}$
+
+\textbf{Giải thích:} Mã giao dịch mượn xác định duy nhất thành viên mượn, bản sao được mượn, ngày mượn, ngày hết hạn, ngày trả và phí phạt.
+
+\vspace{0.5cm}
+
+\textbf{7. Bảng BOOK\_AUTHOR (Bảng trung gian):}
+
+Bảng này có khóa chính kép ($\texttt{BookID}, \texttt{AuthorID}$), nên không có phụ thuộc hàm từ một thuộc tính đơn lẻ. Các phụ thuộc hàm được xác định bởi cả hai khóa chính:
+
+$$
+\begin{aligned}
+\texttt{BookID, AuthorID} &\rightarrow \texttt{BookID} \\
+\texttt{BookID, AuthorID} &\rightarrow \texttt{AuthorID}
+\end{aligned}
+$$
+
+\textbf{Giải thích:} Cả hai thuộc tính đều là một phần của khóa chính, không có phụ thuộc hàm từ khóa này sang khóa kia.
+
+\subsubsection{Tổng hợp các Phụ thuộc Hàm}
+
+\begin{table}[H]
+\centering
+\caption{Tổng hợp Phụ thuộc Hàm cho tất cả các bảng}
+\begin{tabular}{@{}|l|p{10cm}|@{}}
+\hline
+\textbf{Bảng} & \textbf{Phụ thuộc Hàm} \\ \hline
+\texttt{PUBLISHER} & $\texttt{PublisherID} \rightarrow \texttt{Name, Address, ContactNumber}$ \\ \hline
+\texttt{AUTHOR} & $\texttt{AuthorID} \rightarrow \texttt{Name, Nationality, YearOfBirth}$ \\ \hline
+\texttt{MEMBER} & $\texttt{MemberID} \rightarrow \texttt{Name, Address, Phone, MembershipType}$ \\ \hline
+\texttt{BOOK} & $\texttt{BookID} \rightarrow \texttt{ISBN, Title, SubjectCategory, PublicationYear, PublisherID}$ \\ \hline
+\texttt{BOOK\_COPY} & $\texttt{CopyID} \rightarrow \texttt{BookID, Condition, Status}$ \\ \hline
+\texttt{LOAN} & $\texttt{LoanID} \rightarrow \texttt{MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine}$ \\ \hline
+\texttt{BOOK\_AUTHOR} & $\texttt{(BookID, AuthorID)} \rightarrow \texttt{BookID, AuthorID}$ (khóa chính kép) \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Đánh giá Mô hình Quan hệ}
+
+\subsubsection{Tính toàn vẹn dữ liệu (Data Integrity)}
+
+\textbf{1. Toàn vẹn thực thể (Entity Integrity):}
+\begin{itemize}
+    \item Mỗi bảng có khóa chính (Primary Key) xác định duy nhất mỗi dòng
+    \item Khóa chính không chứa giá trị NULL
+    \item Đảm bảo không có các bản ghi trùng lặp
+\end{itemize}
+
+\textbf{2. Toàn vẹn tham chiếu (Referential Integrity):}
+\begin{itemize}
+    \item Mọi khóa ngoại đều tham chiếu đến khóa chính hợp lệ của bảng khác
+    \item Không thể có giá trị khóa ngoại "mồ côi" (orphaned records)
+    \item Được thực thi thông qua ràng buộc FOREIGN KEY
+\end{itemize}
+
+\textbf{3. Toàn vẹn miền (Domain Integrity):}
+\begin{itemize}
+    \item Mỗi thuộc tính có kiểu dữ liệu phù hợp
+    \item Giá trị thuộc tính nằm trong miền giá trị cho phép
+    \item Các ràng buộc CHECK đảm bảo giá trị hợp lệ
+\end{itemize}
+
+\subsubsection{Ưu điểm của Mô hình Quan hệ hiện tại}
+
+\begin{table}[H]
+\centering
+\caption{Ưu điểm thiết kế}
+\begin{tabular}{@{}|l|p{10cm}|@{}}
+\hline
+\textbf{Thiết kế} & \textbf{Ưu điểm} \\ \hline
+Tách BOOK và BOOK\_COPY & Quản lý chính xác số lượng bản sao vật lý của mỗi sách \\ \hline
+Bảng trung gian BOOK\_AUTHOR & Hỗ trợ mối quan hệ M:N giữa tác giả và sách \\ \hline
+Thực thể LOAN riêng biệt & Lưu trữ đầy đủ thông tin về mỗi giao dịch mượn \\ \hline
+Khóa ngoại với CASCADE & Tự động đồng bộ dữ liệu khi xóa/cập nhật \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Hạn chế và Cải tiến tiềm năng}
+
+\textbf{Các vấn đề cần chuẩn hóa trong Báo cáo 3:}
+
+\begin{enumerate}
+    \item \textbf{Phân tích 1NF (First Normal Form):}
+    \begin{itemize}
+        \item Kiểm tra xem tất cả thuộc tính có chứa giá trị nguyên thủy (atomic)
+        \item Không có thuộc tính đa trị (multi-valued)
+        \item Không có các nhóm lặp lại (repeating groups)
+    \end{itemize}
+
+    \item \textbf{Phân tích 2NF (Second Normal Form):}
+    \begin{itemize}
+        \item Kiểm tra các bảng có khóa chính kép (như \texttt{BOOK\_AUTHOR})
+        \item Xác định phụ thuộc hàm một phần (partial dependencies)
+        \item Loại bỏ các thuộc tính phụ thuộc vào một phần của khóa chính
+    \end{itemize}
+
+    \item \textbf{Phân tích 3NF (Third Normal Form):}
+    \begin{itemize}
+        \item Kiểm tra các phụ thuộc hàm truyền tải (transitive dependencies)
+        \item Xác định các thuộc tính phi khóa phụ thuộc vào các thuộc tính phi khóa khác
+        \item Tách các bảng để loại bỏ phụ thuộc truyền tải
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Nhận dạng các Bất thường (Anomaly Recognition)}
+
+\subsubsection{Mục đích của việc nhận dạng bất thường}
+
+Sau khi xác định các Phụ thuộc Hàm (Functional Dependencies) cho tất cả các bảng, bước tiếp theo là nhận dạng các bất thường tiềm ẩn trong cơ sở dữ liệu. Đây là preparation quan trọng cho quá trình chuẩn hóa (normalization) trong Báo cáo 3.
+
+\subsubsection{Phân tích sơ bộ các bất thường}
+
+\textbf{1. Bảng với khóa chính đơn (Single Primary Key):}
+
+Các bảng \texttt{PUBLISHER}, \texttt{AUTHOR}, \texttt{MEMBER}, \texttt{BOOK}, \texttt{BOOK\_COPY}, và \texttt{LOAN} đều có khóa chính đơn. Dựa trên các FD đã xác định:
+
+\begin{itemize}
+    \item \textbf{Không có phụ thuộc hàm một phần (partial dependency)}: Vì tất cả các bảng đều có khóa chính đơn, không có thuộc tính nào phụ thuộc vào một phần của khóa chính.
+    \item \textbf{Không có phụ thuộc hàm truyền tải rõ ràng tại thời điểm này}: Tất cả thuộc tính phi khóa đều phụ thuộc trực tiếp vào khóa chính, không phụ thuộc vào các thuộc tính phi khóa khác.
+\end{itemize}
+
+\textbf{2. Bảng trung gian \texttt{BOOK\_AUTHOR} với khóa chính kép:}
+
+Bảng này có khóa chính kép (\texttt{BookID}, \texttt{AuthorID}):
+
+\begin{itemize}
+    \item \textbf{Không có phụ thuộc hàm một phần}: Cả \texttt{BookID} và \texttt{AuthorID} đều cần thiết để định danh mỗi bản ghi.
+    \item \textbf{Không có thuộc tính phi khóa}: Bảng chỉ chứa hai khóa ngoại, không có thuộc tính thêm nào có thể gây ra phụ thuộc truyền tải.
+\end{itemize}
+
+\subsubsection{Kết luận sơ bộ}
+
+Dựa trên phân tích sơ bộ, cơ sở dữ liệu hiện tại:
+
+\begin{itemize}
+    \item \textbf{Đã đáp ứng 1NF (First Normal Form)}: Tất cả thuộc tính đều chứa giá trị nguyên thủy (atomic), không có thuộc tính đa trị hay nhóm lặp lại.
+    \item \textbf{Đã đáp ứng 2NF (Second Normal Form)}: Không có phụ thuộc hàm một phần do tất cả bảng đều có khóa chính đơn (ngoại trừ bảng trung gian đã được thiết kế đúng).
+    \item \textbf{Cần phân tích kỹ hơn 3NF (Third Normal Form)}: Trong Báo cáo 3, chúng tôi sẽ phân tích chi tiết xem có bất kỳ phụ thuộc hàm truyền tải nào tồn tại giữa các thuộc tính phi khóa.
+\end{itemize}
+
+\textbf{Lưu ý:} Phân tích này là bước sơ bộ dựa trên lược đồ quan hệ hiện tại. Báo cáo 3 sẽ thực hiện phân tích chuẩn hóa chi tiết với ví dụ dữ liệu cụ thể để xác minh các kết luận này.
+
+\subsection{Kết luận báo cáo 2}
+
+\subsubsection{Tổng kết kết quả}
+
+Báo cáo 2 đã hoàn thành việc chuyển đổi từ Sơ đồ ERD sang Mô hình Quan hệ cho hệ thống quản lý thư viện:
+
+\textbf{1. Đã chuyển đổi thành công 6 thực thể ERD thành 6 bảng quan hệ:}
+\begin{itemize}
+    \item \texttt{PUBLISHER} - 4 thuộc tính
+    \item \texttt{AUTHOR} - 4 thuộc tính
+    \item \texttt{MEMBER} - 5 thuộc tính
+    \item \texttt{BOOK} - 6 thuộc tính
+    \item \texttt{BOOK\_COPY} - 4 thuộc tính
+    \item \texttt{LOAN} - 7 thuộc tính
+\end{itemize}
+
+\textbf{2. Đã xác định tất cả Khóa chính (Primary Keys):}
+\begin{itemize}
+    \item \texttt{PUBLISHER.PublisherID}
+    \item \texttt{AUTHOR.AuthorID}
+    \item \texttt{MEMBER.MemberID}
+    \item \texttt{BOOK.BookID}
+    \item \texttt{BOOK\_COPY.CopyID}
+    \item \texttt{LOAN.LoanID}
+\end{itemize}
+
+\textbf{3. Đã thiết lập tất cả Khóa ngoại (Foreign Keys):}
+\begin{itemize}
+    \item \texttt{BOOK.PublisherID} $\rightarrow$ \texttt{PUBLISHER.PublisherID}
+    \item \texttt{BOOK\_COPY.BookID} $\rightarrow$ \texttt{BOOK.BookID}
+    \item \texttt{LOAN.MemberID} $\rightarrow$ \texttt{MEMBER.MemberID}
+    \item \texttt{LOAN.CopyID} $\rightarrow$ \texttt{BOOK\_COPY.CopyID}
+    \item \texttt{BOOK\_AUTHOR.BookID} $\rightarrow$ \texttt{BOOK.BookID}
+    \item \texttt{BOOK\_AUTHOR.AuthorID} $\rightarrow$ \texttt{AUTHOR.AuthorID}
+\end{itemize}
+
+\textbf{4. Đã xác định các Phụ thuộc Hàm (Functional Dependencies):}
+\begin{itemize}
+    \item Tất cả 7 bảng đều đã được phân tích phụ thuộc hàm
+    \item Mỗi bảng có khóa chính xác định duy nhất tất cả thuộc tính khác
+    \item Không có phụ thuộc hàm một phần (vì không có bảng nào có khóa chính kép ngoài BOOK\_AUTHOR)
+    \item Không có phụ thuộc hàm truyền tải rõ ràng (sẽ phân tích kỹ hơn trong Báo cáo 3)
+\end{itemize}
+
+\textbf{5. Đã tạo 1 bảng trung gian cho quan hệ M:N:}
+\begin{itemize}
+    \item \texttt{BOOK\_AUTHOR} với khóa chính kép (\texttt{BookID}, \texttt{AuthorID})
+\end{itemize}
+
+\subsubsection{Chuẩn bị cho báo cáo 3}
+
+Báo cáo 3 sẽ thực hiện quá trình \textbf{Chuẩn hóa (Normalization)} đến 3NF:
+
+\begin{enumerate}
+    \item \textbf{Bước 1: Phân tích 1NF}
+    \begin{itemize}
+        \item Kiểm tra tính nguyên thủy của tất cả thuộc tính
+        \item Xác định và xử lý các thuộc tính đa trị (nếu có)
+        \item Xác định và xử lý các nhóm lặp lại (nếu có)
+    \end{itemize}
+
+    \item \textbf{Bước 2: Phân tích 2NF}
+    \begin{itemize}
+        \item Kiểm tra các bảng có khóa chính kép
+        \item Xác định phụ thuộc hàm một phần
+        \item Tách bảng nếu cần thiết để loại bỏ phụ thuộc một phần
+    \end{itemize}
+
+    \item \textbf{Bước 3: Phân tích 3NF}
+    \begin{itemize}
+        \item Kiểm tra phụ thuộc hàm truyền tải trong mỗi bảng
+        \item Xác định thuộc tính phi khóa phụ thuộc vào thuộc tính phi khóa khác
+        \item Tách bảng nếu cần thiết để loại bỏ phụ thuộc truyền tải
+    \end{itemize}
+
+    \item \textbf{Bước 4: Xác minh}
+    \begin{itemize}
+        \item Kiểm tra lại tất cả các phụ thuộc hàm sau khi chuẩn hóa
+        \item Đảm bảo không mất mối quan hệ giữa các bảng
+        \item Xác minh tính toàn vẹn dữ liệu được duy trì
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Đánh giá chất lượng Mô hình Quan hệ}
+
+\begin{itemize}
+    \item \textbf{Tính đầy đủ:} Tất cả các thực thể và thuộc tính từ ERD đã được chuyển đổi thành các bảng và cột
+    \item \textbf{Tính chính xác:} Tất cả các mối quan hệ đã được thể hiện đúng thông qua khóa ngoại
+    \item \textbf{Tính rõ ràng:} Lược đồ quan hệ được trình bày rõ ràng, dễ hiểu
+    \item \textbf{Khả năng chuẩn hóa:} Mô hình hiện tại sẵn sàng cho quá trình chuẩn hóa 3NF
+    \item \textbf{Khả năng mở rộng:} Có thể thêm các bảng mới cho các chức năng mở rộng (ví dụ: RESERVATION, FINE\_PAYMENT)
+\end{itemize}
+
+\vspace{1cm}
+\begin{center}
+\rule{0.6\textwidth}{0.4pt}
+
+\textbf{KẾT THÚC BÁO CÁO 2}\\
+\vspace{0.5cm}
+\textit{Người thực hiện: Nhóm 3 - Lớp SE2043}\\
+\textit{Ngày hoàn thành: 30/01/2026}\\
+\textit{Giảng viên hướng dẫn: Vũ Thanh Phong}
+\end{center}
+
+%===========================================================
 % REFERENCES
 %===========================================================
 \newpage
@@ -873,7 +1596,7 @@ Báo cáo 2 sẽ chuyển đổi sơ đồ ERD sang mô hình quan hệ (Relatio
 \begin{center}
 \rule{0.5\textwidth}{0.4pt}
 
-\textbf{KẾT THÚC BÁO CÁO 1}\\
+\textbf{KẾT THÚC TOÀN BỘ BÁO CÁO}\\
 \vspace{0.5cm}
 \textit{Người thực hiện: Nhóm 3 - Lớp SE2043}\\
 \textit{Ngày hoàn thành: 26/01/2026}\\
