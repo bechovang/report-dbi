@@ -16,6 +16,10 @@
 % Gói để xoay ngang trang PDF
 \usepackage{pdflscape} 
 
+
+% dùng để canh giữa ô cho table
+\usepackage{tabularray}
+
 %===========================================================
 % PACKAGES FOR VIETNAMESE SUPPORT AND FORMATTING
 %===========================================================
@@ -1057,16 +1061,23 @@ $$
 \begin{table}[H]
 \centering
 \caption{Lược đồ quan hệ BOOK}
-\begin{tabular}{@{}|l|l|l|l|@{}}
-\hline
-\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
-\multirow{6}{*}{\texttt{BOOK}} & \multirow{6}{*}{\underline{\texttt{BookID}}} & \multirow{3}{*}{\texttt{PublisherID}} & \texttt{BookID} & INT \\ \cline{4-5}
-& & & \texttt{ISBN} & VARCHAR(17) \\ \cline{4-5}
-& & & \texttt{Title} & VARCHAR(255) \\ \cline{4-5}
-& & & \texttt{SubjectCategory} & VARCHAR(100) \\ \cline{4-5}
-& & & \texttt{PublicationYear} & INT \\ \cline{4-5}
-& & & \texttt{PublisherID} & INT \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|l|l|l|l|l|},
+  vlines, hlines,
+  rows = {m}, % Căn giữa tất cả các dòng theo chiều dọc (Middle)
+  columns = {l}, % Căn trái nội dung trong cột
+  cell{2}{1} = {r=6}{c}, % Gộp 6 dòng ở cột 1 và căn giữa (Center)
+  cell{2}{2} = {r=6}{c}, % Gộp 6 dòng ở cột 2 và căn giữa (Center)
+  cell{7}{3} = {c},      % Căn giữa PublisherID ở cột 3
+}
+\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\
+BOOK & \underline{BookID} & & BookID & INT \\
+     & & & ISBN & VARCHAR(17) \\
+     & & & Title & VARCHAR(255) \\
+     & & & SubjectCategory & VARCHAR(100) \\
+     & & & PublicationYear & INT \\
+     & & PublisherID & PublisherID & INT \\
+\end{tblr}
 \end{table}
 
 \textbf{Ghi chú:}
