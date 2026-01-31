@@ -1062,21 +1062,21 @@ $$
 \centering
 \caption{Lược đồ quan hệ BOOK}
 \begin{tblr}{
-  colspec = {|l|l|l|l|l|},
-  vlines, hlines,
-  rows = {m}, % Căn giữa tất cả các dòng theo chiều dọc (Middle)
-  columns = {l}, % Căn trái nội dung trong cột
-  cell{2}{1} = {r=6}{c}, % Gộp 6 dòng ở cột 1 và căn giữa (Center)
-  cell{2}{2} = {r=6}{c}, % Gộp 6 dòng ở cột 2 và căn giữa (Center)
-  cell{7}{3} = {c},      % Căn giữa PublisherID ở cột 3
+  colspec = {|c|c|c|l|l|}, % Định dạng cột: Giữa | Giữa | Giữa | Trái | Trái
+  vlines, hlines,          % Kẻ khung
+  rows = {m},              % Căn giữa dọc tất cả các hàng
+  row{1} = {font=\bfseries, c}, % Dòng tiêu đề: In đậm, căn giữa
+  cell{2}{1} = {r=6}{c},   % Ô BOOK: Gộp 6 hàng, căn giữa
+  cell{2}{2} = {r=6}{c},   % Ô BookID: Gộp 6 hàng, căn giữa
+  cell{2}{3} = {r=6}{c},        % Ô PublisherID: Gộp 6 hàng, căn giữa
 }
-\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\
-BOOK & \underline{BookID} & & BookID & INT \\
-     & & & ISBN & VARCHAR(17) \\
-     & & & Title & VARCHAR(255) \\
-     & & & SubjectCategory & VARCHAR(100) \\
-     & & & PublicationYear & INT \\
-     & & PublisherID & PublisherID & INT \\
+Tên bảng & Khóa chính & Khóa ngoại & Thuộc tính & Kiểu dữ liệu \\
+BOOK     & \underline{BookID} & PublisherID & BookID           & INT \\
+         &            &            & ISBN             & VARCHAR(17) \\
+         &            &            & Title            & VARCHAR(255) \\
+         &            &            & SubjectCategory  & VARCHAR(100) \\
+         &            &            & PublicationYear  & INT \\
+         &            &            & PublisherID      & INT \\
 \end{tblr}
 \end{table}
 
