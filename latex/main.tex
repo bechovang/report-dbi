@@ -1095,14 +1095,21 @@ $$
 \begin{table}[H]
 \centering
 \caption{Lược đồ quan hệ BOOK\_COPY}
-\begin{tabular}{@{}|l|l|l|l|@{}}
-\hline
-\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
-\multirow{4}{*}{\texttt{BOOK\_COPY}} & \multirow{4}{*}{\underline{\texttt{CopyID}}} & \multirow{2}{*}{\texttt{BookID}} & \texttt{CopyID} & INT \\ \cline{4-5}
-& & & \texttt{BookID} & INT \\ \cline{4-5}
-& & & \texttt{Condition} & VARCHAR(50) \\ \cline{4-5}
-& & & \texttt{Status} & VARCHAR(20) \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|c|c|c|l|l|}, 
+  vlines, hlines,
+  rows = {m},
+  row{1} = {font=\bfseries, c},
+  cell{2}{1} = {r=4}{c}, % Gộp 4 hàng cho tên bảng
+  cell{2}{2} = {r=4}{c}, % Gộp 4 hàng cho khóa chính
+  cell{2}{3} = {r=4}{c}, % Gộp 4 hàng cho khóa ngoại
+}
+Tên bảng & Khóa chính & Khóa ngoại & Thuộc tính & Kiểu dữ liệu \\
+BOOK\_COPY & \underline{CopyID} & BookID & CopyID & INT \\
+           &           &        & BookID & INT \\
+           &           &        & Condition & VARCHAR(50) \\
+           &           &        & Status    & VARCHAR(20) \\
+\end{tblr}
 \end{table}
 
 \textbf{Ghi chú:}
@@ -1121,17 +1128,24 @@ $$
 \begin{table}[H]
 \centering
 \caption{Lược đồ quan hệ LOAN}
-\begin{tabular}{@{}|l|l|l|l|@{}}
-\hline
-\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} \\ \hline
-\multirow{7}{*}{\texttt{LOAN}} & \multirow{7}{*}{\underline{\texttt{LoanID}}} & \multirow{2}{*}{\texttt{MemberID}, \texttt{CopyID}} & \texttt{LoanID} & INT \\ \cline{4-5}
-& & & \texttt{MemberID} & INT \\ \cline{4-5}
-& & & \texttt{CopyID} & INT \\ \cline{4-5}
-& & & \texttt{BorrowDate} & DATE \\ \cline{4-5}
-& & & \texttt{DueDate} & DATE \\ \cline{4-5}
-& & & \texttt{ReturnDate} & DATE \\ \cline{4-5}
-& & & \texttt{OverdueFine} & DECIMAL(10,2) \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|c|c|c|l|l|}, % 5 cột: Giữa, Giữa, Giữa, Trái, Trái
+  vlines, hlines,
+  rows = {m},            % Căn giữa dọc cho tất cả các ô
+  row{1} = {font=\bfseries, c}, % Dòng đầu in đậm và căn giữa ngang
+  cell{2}{1} = {r=7}{c}, % Gộp 7 hàng cho tên bảng LOAN
+  cell{2}{2} = {r=7}{c}, % Gộp 7 hàng cho khóa chính LoanID
+  cell{2}{3} = {r=7}{c}, % Gộp 7 hàng cho các khóa ngoại
+}
+Tên bảng & Khóa chính & Khóa ngoại & Thuộc tính & Kiểu dữ liệu \\
+LOAN     & \underline{LoanID} & {MemberID, \\ CopyID} & LoanID & INT \\
+         &            &            & MemberID     & INT \\
+         &            &            & CopyID       & INT \\
+         &            &            & BorrowDate   & DATE \\
+         &            &            & DueDate      & DATE \\
+         &            &            & ReturnDate   & DATE \\
+         &            &            & OverdueFine  & DECIMAL(10,2) \\
+\end{tblr}
 \end{table}
 
 \textbf{Ghi chú:}
@@ -1156,12 +1170,18 @@ $$
 \begin{table}[H]
 \centering
 \caption{Lược đồ quan hệ BOOK\_AUTHOR (Bảng trung gian)}
-\begin{tabular}{@{}|l|l|l|l|@{}}
-\hline
-\textbf{Tên bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại} & \textbf{Mô tả} \\ \hline
-\multirow{2}{*}{\texttt{BOOK\_AUTHOR}} & \multirow{2}{*}{\underline{\texttt{BookID}}, \underline{\texttt{AuthorID}}} & \texttt{BookID} $\rightarrow$ \texttt{BOOK(BookID)} & Khóa ngoại đến BOOK \\ \cline{3-4}
-& & \texttt{AuthorID} $\rightarrow$ \texttt{AUTHOR(AuthorID)} & Khóa ngoại đến AUTHOR \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|c|c|X[l]|X[l]|}, % Cột X sẽ tự động co giãn để vừa khít trang giấy
+  vlines, hlines,
+  rows = {m},                 % Căn giữa dọc
+  row{1} = {font=\bfseries, c}, % Dòng tiêu đề in đậm, căn giữa ngang
+  cell{2}{1} = {r=2}{c},      % Gộp 2 hàng cho tên bảng
+  cell{2}{2} = {r=2}{c},      % Gộp 2 hàng cho khóa chính kép
+}
+Tên bảng & Khóa chính & Khóa ngoại & Mô tả \\
+BOOK\_AUTHOR & \underline{BookID}, \underline{AuthorID} & BookID $\rightarrow$ BOOK (BookID) & Khóa ngoại đến BOOK \\
+             &                                          & AuthorID $\rightarrow$ AUTHOR (AuthorID) & Khóa ngoại đến AUTHOR \\
+\end{tblr}
 \end{table}
 
 \textbf{Ghi chú:}
@@ -1177,43 +1197,49 @@ $$
 
 \textbf{Tóm tắt tất cả 7 bảng trong hệ thống:}
 
-$$
-\begin{aligned}
-\texttt{PUBLISHER}(\underline{\texttt{PublisherID}}, \texttt{Name}, \texttt{Address}, \texttt{ContactNumber}) \\
-\texttt{AUTHOR}(\underline{\texttt{AuthorID}}, \texttt{Name}, \texttt{Nationality}, \texttt{YearOfBirth}) \\
-\texttt{MEMBER}(\underline{\texttt{MemberID}}, \texttt{Name}, \texttt{Address}, \texttt{Phone}, \texttt{MembershipType}) \\
-\texttt{BOOK}(\underline{\texttt{BookID}}, \texttt{ISBN}, \texttt{Title}, \texttt{SubjectCategory}, \texttt{PublicationYear}, \texttt{PublisherID}^*) \\
-\texttt{BOOK\_COPY}(\underline{\texttt{CopyID}}, \texttt{BookID}^\dagger, \texttt{Condition}, \texttt{Status}) \\
-\texttt{LOAN}(\underline{\texttt{LoanID}}, \texttt{MemberID}^\ddagger, \texttt{CopyID}^\ddagger, \texttt{BorrowDate}, \texttt{DueDate}, \texttt{ReturnDate}, \texttt{OverdueFine}) \\
-\texttt{BOOK\_AUTHOR}(\underline{\texttt{BookID}^\dagger}, \underline{\texttt{AuthorID}^\ddagger})
-\end{aligned}
-$$
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.5} % Giúp các dòng giãn cách thoáng hơn
+\begin{tabular}{l p{12cm}}
+\textbf{PUBLISHER} & (\underline{PublisherID}, Name, Address, ContactNumber) \\
+\textbf{AUTHOR}    & (\underline{AuthorID}, Name, Nationality, YearOfBirth) \\
+\textbf{MEMBER}    & (\underline{MemberID}, Name, Address, Phone, MembershipType) \\
+\textbf{BOOK}      & (\underline{BookID}, ISBN, Title, SubjectCategory, PublicationYear, PublisherID$^*$) \\
+\textbf{BOOK\_COPY} & (\underline{CopyID}, BookID$^\dagger$, Condition, Status) \\
+\textbf{LOAN}      & (\underline{LoanID}, MemberID$^\ddagger$, CopyID$^\ddagger$, BorrowDate, DueDate, ReturnDate, OverdueFine) \\
+\textbf{BOOK\_AUTHOR} & (\underline{BookID}$^\dagger$, \underline{AuthorID}$^\ddagger$) \\
+\end{tabular}
+\end{table}
 
-\textbf{Chú thích:}
-\begin{itemize}
-    \item $^*$ \texttt{PublisherID} là khóa ngoại tham chiếu \texttt{PUBLISHER(PublisherID)}
-    \item $^\dagger$ \texttt{BookID} là khóa ngoại tham chiếu \texttt{BOOK(BookID)}
-    \item $^\ddagger$ \texttt{MemberID} là khóa ngoại tham chiếu \texttt{MEMBER(MemberID)}
-    \item $^\ddagger$ \texttt{CopyID} là khóa ngoại tham chiếu \texttt{BOOK\_COPY(CopyID)}
-    \item Dấu gạch dưới ($\underline{\text{...}}$) chỉ Khóa chính (Primary Key)
+\vspace{0.3cm}
+\noindent \textbf{Chú thích:}
+\begin{itemize}[leftmargin=1.5cm, labelsep=0.3cm, itemsep=0pt]
+    \item[$^*, \dagger, \ddagger$] Các ký hiệu phía sau tên thuộc tính chỉ \textbf{Khóa ngoại} (Foreign Key) tham chiếu đến bảng tương ứng.
+    \item[\underline{\hspace{0.3cm}}] Các thuộc tính được gạch chân đóng vai trò là \textbf{Khóa chính} (Primary Key).
 \end{itemize}
 
 \begin{table}[H]
 \centering
 \caption{Tổng hợp các bảng và khóa}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{STT} & \textbf{Tên bảng} & \textbf{Khóa chính (PK)} & \textbf{Khóa ngoại (FK)} \\ \hline
-1 & \texttt{PUBLISHER} & \texttt{PublisherID} & - \\ \hline
-2 & \texttt{AUTHOR} & \texttt{AuthorID} & - \\ \hline
-3 & \texttt{MEMBER} & \texttt{MemberID} & - \\ \hline
-4 & \texttt{BOOK} & \texttt{BookID} & \texttt{PublisherID} $\rightarrow$ \texttt{PUBLISHER} \\ \hline
-5 & \texttt{BOOK\_COPY} & \texttt{CopyID} & \texttt{BookID} $\rightarrow$ \texttt{BOOK} \\ \hline
-6 & \texttt{LOAN} & \texttt{LoanID} & \texttt{MemberID} $\rightarrow$ \texttt{MEMBER} \\
-& & & \texttt{CopyID} $\rightarrow$ \texttt{BOOK\_COPY} \\ \hline
-7 & \texttt{BOOK\_AUTHOR} & \texttt{BookID, AuthorID} & \texttt{BookID} $\rightarrow$ \texttt{BOOK} \\
-& & & \texttt{AuthorID} $\rightarrow$ \texttt{AUTHOR} \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|c|l|l|X[l]|}, % Cột cuối tự động giãn rộng
+  vlines, hlines,
+  rows = {m},                 % Căn giữa dọc cho tất cả các hàng
+  row{1} = {font=\bfseries, c}, % Dòng tiêu đề: In đậm, căn giữa ngang
+  cell{7}{1,2,3} = {r=2}{l},    % Gộp hàng cho bảng LOAN
+  cell{9}{1,2,3} = {r=2}{l},    % Gộp hàng cho bảng BOOK_AUTHOR
+}
+STT & Tên bảng & Khóa chính (PK) & Khóa ngoại (FK) \\
+1 & PUBLISHER   & PublisherID & -- \\
+2 & AUTHOR      & AuthorID    & -- \\
+3 & MEMBER      & MemberID    & -- \\
+4 & BOOK        & BookID      & PublisherID $\rightarrow$ PUBLISHER \\
+5 & BOOK\_COPY  & CopyID      & BookID $\rightarrow$ BOOK \\
+6 & LOAN        & LoanID      & MemberID $\rightarrow$ MEMBER \\
+  &             &             & CopyID $\rightarrow$ BOOK\_COPY \\
+7 & BOOK\_AUTHOR & BookID, AuthorID & BookID $\rightarrow$ BOOK \\
+  &             &                   & AuthorID $\rightarrow$ AUTHOR \\
+\end{tblr}
 \end{table}
 
 \subsubsection{Sơ đồ Mô hình Quan hệ (Relational Data Model Diagram)}
