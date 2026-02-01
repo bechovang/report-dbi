@@ -839,25 +839,6 @@ Báo cáo 1 đã hoàn thành phân tích và thiết kế sơ đồ ERD cho h�
     \item \entity{BOOK\_AUTHOR} - quản lý mối quan hệ nhiều-nhiều
 \end{itemize}
 
-\subsubsection{Chuẩn bị cho báo cáo 2}
-
-Báo cáo 2 sẽ chuyển đổi sơ đồ ERD sang mô hình quan hệ (Relational Data Model) và thực hiện:
-\begin{enumerate}
-    \item Chuyển đổi thực thể thành bảng (tables)
-    \item Xác định khóa chính và khóa ngoại
-    \item Xác định các lược đồ quan hệ (relation schemas)
-    \item Nhận dạng các mẫu không chuẩn hóa
-    \item Chuẩn bị cho quá trình chuẩn hóa trong báo cáo 3
-\end{enumerate}
-
-\subsubsection{Đánh giá chất lượng thiết kế}
-
-\begin{itemize}
-    \item \textbf{Tính đầy đủ:} Tất cả các thực thể và mối quan hệ cần thiết đã được xác định
-    \item \textbf{Tính chính xác:} Bội số và các ràng buộc được xác định đúng theo yêu cầu
-    \item \textbf{Tính rõ ràng:} Sơ đồ ERD thể hiện rõ cấu trúc dữ liệu
-    \item \textbf{Khả năng mở rộng:} Thiết kế cho phép thêm các thực thể mới trong tương lai
-\end{itemize}
 
 %===========================================================
 % SECTION 2: REPORT 2 - RELATIONAL MODEL DESIGN
@@ -1392,17 +1373,21 @@ $$
 \begin{table}[H]
 \centering
 \caption{Tổng hợp Phụ thuộc Hàm cho tất cả các bảng}
-\begin{tabular}{@{}|l|p{10cm}|@{}}
-\hline
-\textbf{Bảng} & \textbf{Phụ thuộc Hàm} \\ \hline
-\texttt{PUBLISHER} & $\texttt{PublisherID} \rightarrow \texttt{Name, Address, ContactNumber}$ \\ \hline
-\texttt{AUTHOR} & $\texttt{AuthorID} \rightarrow \texttt{Name, Nationality, YearOfBirth}$ \\ \hline
-\texttt{MEMBER} & $\texttt{MemberID} \rightarrow \texttt{Name, Address, Phone, MembershipType}$ \\ \hline
-\texttt{BOOK} & $\texttt{BookID} \rightarrow \texttt{ISBN, Title, SubjectCategory, PublicationYear, PublisherID}$ \\ \hline
-\texttt{BOOK\_COPY} & $\texttt{CopyID} \rightarrow \texttt{BookID, Condition, Status}$ \\ \hline
-\texttt{LOAN} & $\texttt{LoanID} \rightarrow \texttt{MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine}$ \\ \hline
-\texttt{BOOK\_AUTHOR} & $\texttt{(BookID, AuthorID)} \rightarrow \texttt{BookID, AuthorID}$ (khóa chính kép) \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {|l|X[l]|}, % Cột 1 tự vừa nội dung, Cột 2 tự giãn và xuống dòng
+  vlines, hlines,
+  rows = {m},            % Căn giữa dọc
+  row{1} = {font=\bfseries, c}, % Tiêu đề in đậm, căn giữa
+}
+Bảng & Phụ thuộc Hàm \\
+PUBLISHER & \texttt{PublisherID} $\rightarrow$ \texttt{Name}, \texttt{Address}, \texttt{ContactNumber} \\
+AUTHOR    & \texttt{AuthorID} $\rightarrow$ \texttt{Name}, \texttt{Nationality}, \texttt{YearOfBirth} \\
+MEMBER    & \texttt{MemberID} $\rightarrow$ \texttt{Name}, \texttt{Address}, \texttt{Phone}, \texttt{MembershipType} \\
+BOOK      & \texttt{BookID} $\rightarrow$ \texttt{ISBN}, \texttt{Title}, \texttt{SubjectCategory}, \texttt{PublicationYear}, \texttt{PublisherID} \\
+BOOK\_COPY & \texttt{CopyID} $\rightarrow$ \texttt{BookID}, \texttt{Condition}, \texttt{Status} \\
+LOAN      & \texttt{LoanID} $\rightarrow$ \texttt{MemberID}, \texttt{CopyID}, \texttt{BorrowDate}, \texttt{DueDate}, \texttt{ReturnDate}, \texttt{OverdueFine} \\
+BOOK\_AUTHOR & (\texttt{BookID}, \texttt{AuthorID}) $\rightarrow$ \texttt{BookID}, \texttt{AuthorID} (khóa chính kép) \\
+\end{tblr}
 \end{table}
 
 \subsection{Đánh giá Mô hình Quan hệ}
@@ -1559,49 +1544,6 @@ Báo cáo 2 đã hoàn thành việc chuyển đổi từ Sơ đồ ERD sang Mô
     \item \texttt{BOOK\_AUTHOR} với khóa chính kép (\texttt{BookID}, \texttt{AuthorID})
 \end{itemize}
 
-\subsubsection{Chuẩn bị cho báo cáo 3}
-
-Báo cáo 3 sẽ thực hiện quá trình \textbf{Chuẩn hóa (Normalization)} đến 3NF:
-
-\begin{enumerate}
-    \item \textbf{Bước 1: Phân tích 1NF}
-    \begin{itemize}
-        \item Kiểm tra tính nguyên thủy của tất cả thuộc tính
-        \item Xác định và xử lý các thuộc tính đa trị (nếu có)
-        \item Xác định và xử lý các nhóm lặp lại (nếu có)
-    \end{itemize}
-
-    \item \textbf{Bước 2: Phân tích 2NF}
-    \begin{itemize}
-        \item Kiểm tra các bảng có khóa chính kép
-        \item Xác định phụ thuộc hàm một phần
-        \item Tách bảng nếu cần thiết để loại bỏ phụ thuộc một phần
-    \end{itemize}
-
-    \item \textbf{Bước 3: Phân tích 3NF}
-    \begin{itemize}
-        \item Kiểm tra phụ thuộc hàm truyền tải trong mỗi bảng
-        \item Xác định thuộc tính phi khóa phụ thuộc vào thuộc tính phi khóa khác
-        \item Tách bảng nếu cần thiết để loại bỏ phụ thuộc truyền tải
-    \end{itemize}
-
-    \item \textbf{Bước 4: Xác minh}
-    \begin{itemize}
-        \item Kiểm tra lại tất cả các phụ thuộc hàm sau khi chuẩn hóa
-        \item Đảm bảo không mất mối quan hệ giữa các bảng
-        \item Xác minh tính toàn vẹn dữ liệu được duy trì
-    \end{itemize}
-\end{enumerate}
-
-\subsubsection{Đánh giá chất lượng Mô hình Quan hệ}
-
-\begin{itemize}
-    \item \textbf{Tính đầy đủ:} Tất cả các thực thể và thuộc tính từ ERD đã được chuyển đổi thành các bảng và cột
-    \item \textbf{Tính chính xác:} Tất cả các mối quan hệ đã được thể hiện đúng thông qua khóa ngoại
-    \item \textbf{Tính rõ ràng:} Lược đồ quan hệ được trình bày rõ ràng, dễ hiểu
-    \item \textbf{Khả năng chuẩn hóa:} Mô hình hiện tại sẵn sàng cho quá trình chuẩn hóa 3NF
-    \item \textbf{Khả năng mở rộng:} Có thể thêm các bảng mới cho các chức năng mở rộng (ví dụ: RESERVATION, FINE\_PAYMENT)
-\end{itemize}
 
 \vspace{1cm}
 \begin{center}
