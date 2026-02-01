@@ -1314,7 +1314,14 @@ $$
 \end{aligned}
 $$
 
-\textbf{Gộp:} $\texttt{BookID} \rightarrow \texttt{ISBN, Title, SubjectCategory, PublicationYear, PublisherID}$
+
+\begin{tblr}{
+  colspec = {l X[l]}, % Cột 1: nhãn, Cột 2: nội dung tự xuống dòng
+  colsep = 4pt,       % Khoảng cách giữa chữ "Gộp" và nội dung
+}
+\textbf{Gộp:} & $\texttt{BookID} \rightarrow \texttt{ISBN}, \texttt{Title}, \texttt{SubjectCategory}, \texttt{PublicationYear}, \texttt{PublisherID}$ \\
+\end{tblr}
+
 
 \textbf{Giải thích:} Mã sách xác định duy nhất ISBN, tên, thể loại, năm xuất bản và mã nhà xuất bản của sách đó.
 
@@ -1349,7 +1356,13 @@ $$
 \end{aligned}
 $$
 
-\textbf{Gộp:} $\texttt{LoanID} \rightarrow \texttt{MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine}$
+
+\begin{tblr}{
+  colspec = {l X[l]},
+  colsep = 4pt,
+}
+\textbf{Gộp:} & $\texttt{LoanID} \rightarrow \texttt{MemberID}, \texttt{CopyID}, \texttt{BorrowDate}, \texttt{DueDate}, \texttt{ReturnDate}, \texttt{OverdueFine}$ \\
+\end{tblr}
 
 \textbf{Giải thích:} Mã giao dịch mượn xác định duy nhất thành viên mượn, bản sao được mượn, ngày mượn, ngày hết hạn, ngày trả và phí phạt.
 
