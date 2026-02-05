@@ -1744,17 +1744,23 @@ Một bảng được gọi là ở First Normal Form (1NF) khi thỏa mãn các
 
 Lược đồ: \texttt{PUBLISHER(PublisherID, Name, Address, ContactNumber)}
 
+
 \begin{table}[H]
 \centering
 \caption{Kiểm tra 1NF - PUBLISHER}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-PublisherID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-Name & VARCHAR(255) & [OK] & Chuỗi ký tự đơn \\ \hline
-Address & VARCHAR(500) & [OK] & Chuỗi ký tự đơn \\ \hline
-ContactNumber & VARCHAR(50) & [OK] & Chuỗi ký tự đơn \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề: trái, trái, giữa, trái
+  hlines, % Kẻ đường ngang
+  vlines, % Kẻ đường dọc
+  row{1} = {font=\bfseries, bg=gray9}, % Dòng đầu in đậm, nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính    & Kiểu dữ liệu  & Atomic? & Ghi chú \\
+PublisherID   & INT           & [OK]    & Giá trị đơn, duy nhất \\
+Name          & VARCHAR(255)  & [OK]    & Chuỗi ký tự đơn \\
+Address       & VARCHAR(500)  & [OK]    & Chuỗi ký tự đơn \\
+ContactNumber & VARCHAR(50)   & [OK]    & Chuỗi ký tự đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng PUBLISHER \textbf{ĐÃ ĐẠP ỨNG 1NF}. Tất cả thuộc tính đều chứa giá trị nguyên thủy.
@@ -1765,17 +1771,23 @@ ContactNumber & VARCHAR(50) & [OK] & Chuỗi ký tự đơn \\ \hline
 
 Lược đồ: \texttt{AUTHOR(AuthorID, Name, Nationality, YearOfBirth)}
 
+
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - AUTHOR}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-AuthorID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-Name & VARCHAR(255) & [OK] & Chuỗi ký tự đơn \\ \hline
-Nationality & VARCHAR(100) & [OK] & Chuỗi ký tự đơn \\ \hline
-YearOfBirth & INT & [OK] & Giá trị số nguyên \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng AUTHOR}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề dọc (m) và ngang (l,c)
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Dòng tiêu đề in đậm, nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính    & Kiểu dữ liệu  & Atomic? & Ghi chú \\
+AuthorID      & INT           & [OK]    & Giá trị đơn, duy nhất \\
+Name          & VARCHAR(255)  & [OK]    & Chuỗi ký tự đơn \\
+Nationality   & VARCHAR(100)  & [OK]    & Chuỗi ký tự đơn \\
+YearOfBirth   & INT           & [OK]    & Giá trị số nguyên \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng AUTHOR \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1788,16 +1800,21 @@ Lược đồ: \texttt{MEMBER(MemberID, Name, Address, Phone, MembershipType)}
 
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - MEMBER}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-MemberID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-Name & VARCHAR(255) & [OK] & Chuỗi ký tự đơn \\ \hline
-Address & VARCHAR(500) & [OK] & Chuỗi ký tự đơn \\ \hline
-Phone & VARCHAR(20) & [OK] & Chuỗi ký tự đơn \\ \hline
-MembershipType & VARCHAR(50) & [OK] & Chuỗi ký tự đơn \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng MEMBER}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề trái cho text, giữa cho cột [OK]
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Tiêu đề in đậm trên nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính     & Kiểu dữ liệu  & Atomic? & Ghi chú \\
+MemberID       & INT           & [OK]    & Giá trị đơn, duy nhất \\
+Name           & VARCHAR(255)  & [OK]    & Chuỗi ký tự đơn \\
+Address        & VARCHAR(500)  & [OK]    & Chuỗi ký tự đơn \\
+Phone          & VARCHAR(20)   & [OK]    & Chuỗi ký tự đơn \\
+MembershipType & VARCHAR(50)   & [OK]    & Chuỗi ký tự đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng MEMBER \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1810,17 +1827,22 @@ Lược đồ: \texttt{BOOK(BookID, ISBN, Title, SubjectCategory, PublicationYea
 
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - BOOK}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-BookID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-ISBN & VARCHAR(17) & [OK] & Chuỗi ký tự đơn \\ \hline
-Title & VARCHAR(255) & [OK] & Chuỗi ký tự đơn \\ \hline
-SubjectCategory & VARCHAR(100) & [OK] & Chuỗi ký tự đơn \\ \hline
-PublicationYear & INT & [OK] & Giá trị số nguyên \\ \hline
-PublisherID & INT & [OK] & Khóa ngoại, giá trị đơn \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng BOOK}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề: trái, trái, giữa (cho Atomic), trái
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Tiêu đề in đậm, nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính      & Kiểu dữ liệu  & Atomic? & Ghi chú \\
+BookID          & INT           & [OK]    & Giá trị đơn, duy nhất \\
+ISBN            & VARCHAR(17)   & [OK]    & Chuỗi ký tự đơn \\
+Title           & VARCHAR(255)  & [OK]    & Chuỗi ký tự đơn \\
+SubjectCategory & VARCHAR(100)  & [OK]    & Chuỗi ký tự đơn \\
+PublicationYear & INT           & [OK]    & Giá trị số nguyên \\
+PublisherID     & INT           & [OK]    & Khóa ngoại, giá trị đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng BOOK \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1833,15 +1855,20 @@ Lược đồ: \texttt{BOOK\_COPY(CopyID, BookID, Condition, Status)}
 
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - BOOK\_COPY}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-CopyID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-BookID & INT & [OK] & Khóa ngoại, giá trị đơn \\ \hline
-Condition & VARCHAR(50) & [OK] & Chuỗi ký tự đơn \\ \hline
-Status & VARCHAR(20) & [OK] & Chuỗi ký tự đơn \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng BOOK\_COPY}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề trái cho nội dung, giữa cho cột Atomic
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Tiêu đề in đậm trên nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính    & Kiểu dữ liệu  & Atomic? & Ghi chú \\
+CopyID        & INT           & [OK]    & Giá trị đơn, duy nhất \\
+BookID        & INT           & [OK]    & Khóa ngoại, giá trị đơn \\
+Condition     & VARCHAR(50)   & [OK]    & Chuỗi ký tự đơn \\
+Status        & VARCHAR(20)   & [OK]    & Chuỗi ký tự đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng BOOK\_COPY \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1854,18 +1881,23 @@ Lược đồ: \texttt{LOAN(LoanID, MemberID, CopyID, BorrowDate, DueDate, Retur
 
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - LOAN}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-LoanID & INT & [OK] & Giá trị đơn, duy nhất \\ \hline
-MemberID & INT & [OK] & Khóa ngoại, giá trị đơn \\ \hline
-CopyID & INT & [OK] & Khóa ngoại, giá trị đơn \\ \hline
-BorrowDate & DATE & [OK] & Giá trị ngày đơn \\ \hline
-DueDate & DATE & [OK] & Giá trị ngày đơn \\ \hline
-ReturnDate & DATE & [OK] & Giá trị ngày đơn (có thể NULL) \\ \hline
-OverdueFine & DECIMAL(10,2) & [OK] & Giá trị số đơn \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng LOAN}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Trái, Trái, Giữa, Trái
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Tiêu đề đậm, nền xám
+  rowhead = 1,
+}
+Thuộc tính    & Kiểu dữ liệu   & Atomic? & Ghi chú \\
+LoanID        & INT            & [OK]    & Giá trị đơn, duy nhất \\
+MemberID      & INT            & [OK]    & Khóa ngoại, giá trị đơn \\
+CopyID        & INT            & [OK]    & Khóa ngoại, giá trị đơn \\
+BorrowDate    & DATE           & [OK]    & Giá trị ngày đơn \\
+DueDate       & DATE           & [OK]    & Giá trị ngày đơn \\
+ReturnDate    & DATE           & [OK]    & Giá trị ngày đơn (có thể NULL) \\
+OverdueFine   & DECIMAL(10,2)  & [OK]    & Giá trị số đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng LOAN \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1878,13 +1910,18 @@ Lược đồ: \texttt{BOOK\_AUTHOR(BookID, AuthorID)}
 
 \begin{table}[H]
 \centering
-\caption{Kiểm tra 1NF - BOOK\_AUTHOR}
-\begin{tabular}{@{}|l|l|l|@{}}
-\hline
-\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Atomic?} & \textbf{Ghi chú} \\ \hline
-BookID & INT & [OK] & Khóa chính, giá trị đơn \\ \hline
-AuthorID & INT & [OK] & Khóa chính, giá trị đơn \\ \hline
-\end{tabular}
+\caption{Kiểm tra tính chuẩn hóa 1NF - Bảng BOOK\_AUTHOR}
+\begin{tblr}{
+  colspec = {Q[l,m] Q[l,m] Q[c,m] Q[l,m]}, % Căn lề: Trái, Trái, Giữa, Trái
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9}, % Tiêu đề in đậm, nền xám nhạt
+  rowhead = 1,
+}
+Thuộc tính & Kiểu dữ liệu & Atomic? & Ghi chú \\
+BookID     & INT          & [OK]    & Khóa chính, Khóa ngoại, Giá trị đơn \\
+AuthorID   & INT          & [OK]    & Khóa chính, Khóa ngoại, Giá trị đơn \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận:} Bảng BOOK\_AUTHOR \textbf{ĐÃ ĐẠP ỨNG 1NF}.
@@ -1894,17 +1931,21 @@ AuthorID & INT & [OK] & Khóa chính, giá trị đơn \\ \hline
 \begin{table}[H]
 \centering
 \caption{Tổng kết kiểm tra 1NF cho tất cả các bảng}
-\begin{tabular}{|c|l|c|}
-\hline
-\textbf{STT} & \textbf{Tên bảng} & \textbf{Đã đáp ứng 1NF?} \\ \hline
-1 & PUBLISHER & \textbf{CÓ} \\ \hline
-2 & AUTHOR & \textbf{CÓ} \\ \hline
-3 & MEMBER & \textbf{CÓ} \\ \hline
-4 & BOOK & \textbf{CÓ} \\ \hline
-5 & BOOK\_COPY & \textbf{CÓ} \\ \hline
-6 & LOAN & \textbf{CÓ} \\ \hline
-7 & BOOK\_AUTHOR & \textbf{CÓ} \\ \hline
-\end{tabular}
+\begin{tblr}{
+  colspec = {Q[c,m,wd=3em] Q[l,m,wd=12em] Q[c,m,wd=10em]}, % Định độ rộng cột cho cân đối
+  hlines, 
+  vlines,
+  row{1} = {font=\bfseries, bg=gray9} % Tiêu đề đậm, nền xám nhạt
+}
+STT & Tên bảng     & Đã đáp ứng 1NF? \\
+1   & PUBLISHER    & \textbf{CÓ}     \\
+2   & AUTHOR       & \textbf{CÓ}     \\
+3   & MEMBER       & \textbf{CÓ}     \\
+4   & BOOK         & \textbf{CÓ}     \\
+5   & BOOK\_COPY   & \textbf{CÓ}     \\
+6   & LOAN         & \textbf{CÓ}     \\
+7   & BOOK\_AUTHOR & \textbf{CÓ}     \\
+\end{tblr}
 \end{table}
 
 \textbf{Kết luận chung:} Tất cả 7 bảng trong cơ sở dữ liệu đều \textbf{ĐÃ ĐẠP ỨNG 1NF}. Không có thuộc tính nào chứa giá trị không nguyên thủy, không có thuộc tính đa trị và không có nhóm lặp lại.
