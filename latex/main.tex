@@ -3,6 +3,34 @@
 
 \documentclass[12pt,a4paper]{article}
 
+
+% Định nghĩa lại để fix lỗi Tiếng Việt
+\setmonofont{Courier New}
+\newtcblisting{sqlcode}[2][]{
+    arc=0mm,
+    colback=gray!5,
+    colframe=gray!75!black,
+    fonttitle=\bfseries\small,
+    title=#2,
+    listing only,
+    listing engine=listings,
+    listing options={
+        language=SQL,
+        basicstyle=\ttfamily\small,
+        keywordstyle=\color{blue}\bfseries,
+        commentstyle=\color{green!50!black}\itshape,
+        stringstyle=\color{red},
+        breaklines=true,
+        showstringspaces=false,
+        tabsize=2,
+        extendedchars=true,
+        columns=fullflexible,
+        keepspaces=true
+    },
+    #1
+}
+
+
 % thêm svg vào, nhưng khó dùng, chưa sài
 \usepackage[inkscapelatex=false]{svg}
 
@@ -58,19 +86,37 @@
 \usetikzlibrary{shapes,arrows,positioning,fit,backgrounds,calc}
 
 % For code listings (SQL, etc.)
-\usepackage{listings}
-\lstset{
-    basicstyle=\ttfamily\small,
-    breaklines=true,
-    frame=single,
-    backgroundcolor=\color{gray!10},
-    keywordstyle=\color{blue},
-    commentstyle=\color{green!60!black},
-    stringstyle=\color{red},
-    showstringspaces=false,
-    tabsize=2,
-    captionpos=b
+\usepackage{tcolorbox}
+\tcbuselibrary{listingsutf8, skins}
+
+% Định nghĩa lại style cho khối Code SQL (Đã Fix lỗi Tiếng Việt)
+\newtcblisting{sqlcode}[2][]{
+    arc=0mm,
+    colback=gray!5,
+    colframe=gray!75!black,
+    fonttitle=\bfseries\small,
+    title=#2,
+    listing only,
+    listing engine=listings,
+    listing options={
+        language=SQL,
+        basicstyle=\ttfamily\small, % Font Courier New
+        keywordstyle=\color{blue}\bfseries,
+        commentstyle=\color{green!50!black}\itshape,
+        stringstyle=\color{red},
+        breaklines=true,
+        showstringspaces=false,
+        tabsize=2,
+        % Cấu hình quan trọng để fix lỗi Tiếng Việt:
+        escapeinside={(*}{*)}, % Dùng (* ... *) để viết Tiếng Việt
+        inputencoding=utf8,
+        extendedchars=true,
+    },
+    #1
 }
+
+% Định nghĩa lệnh để format comment Tiếng Việt cho đẹp (Màu xanh + Nghiêng)
+\newcommand{\vncomment}[1]{\textit{\color{green!50!black}#1}}
 
 %===========================================================
 % PAGE GEOMETRY
@@ -2568,20 +2614,19 @@ Báo cáo 4 là bước quan trọng chuyển từ thiết kế lý thuyết san
 
 \subsubsection{Tạo cơ sở dữ liệu}
 
-\begin{lstlisting}[language=SQL, caption=Tạo cơ sở dữ liệu LibraryDB]
--- Tạo cơ sở dữ liệu
+\begin{sqlcode}{Listing 1: Tạo cơ sở dữ liệu LibraryDB}
+-- (* \vncomment{Tạo cơ sở dữ liệu} *)
 CREATE DATABASE LibraryDB;
 GO
 
--- Sử dụng cơ sở dữ liệu
+-- (* \vncomment{Sử dụng cơ sở dữ liệu vừa tạo} *)
 USE LibraryDB;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Xóa bảng nếu tồn tại (để tránh lỗi)}
 
-\begin{lstlisting}[language=SQL, caption=Xóa bảng theo thứ tự đúng]
--- Xóa bảng theo thứ tự (con trước, cha sau)
+\begin{sqlcode}{Xóa bảng theo thứ tự đúng}
+-- (* \vncomment{Xóa bảng theo thứ tự (con trước, cha sau)} *)
 DROP TABLE IF EXISTS LOAN;
 DROP TABLE IF EXISTS BOOK_AUTHOR;
 DROP TABLE IF EXISTS BOOK_COPY;
@@ -2589,19 +2634,18 @@ DROP TABLE IF EXISTS BOOK;
 DROP TABLE IF EXISTS MEMBER;
 DROP TABLE IF EXISTS AUTHOR;
 DROP TABLE IF EXISTS PUBLISHER;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Tạo bảng với đầy đủ ràng buộc}
 
 \subsubsection{Bảng PUBLISHER (Nhà xuất bản)}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng PUBLISHER]
+\begin{sqlcode}{Tạo bảng PUBLISHER}
 CREATE TABLE PUBLISHER (
-    PublisherID      INT           NOT NULL   IDENTITY(1,1),
-    Name             VARCHAR(255)  NOT NULL,
-    Address          VARCHAR(500)  NULL,
-    ContactNumber    VARCHAR(50)   NULL,
+    PublisherID      INT            NOT NULL   IDENTITY(1,1),
+    Name             VARCHAR(255)   NOT NULL,
+    Address          VARCHAR(500)   NULL,
+    ContactNumber    VARCHAR(50)    NULL,
 
     -- Primary Key
     CONSTRAINT PK_PUBLISHER PRIMARY KEY (PublisherID),
@@ -2612,8 +2656,7 @@ CREATE TABLE PUBLISHER (
     CONSTRAINT CK_PUBLISHER_ContactNumber
         CHECK (ContactNumber IS NULL OR ContactNumber LIKE '[0-9]%')
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2624,12 +2667,12 @@ GO
 
 \subsubsection{Bảng AUTHOR (Tác giả)}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng AUTHOR]
+\begin{sqlcode}{Tạo bảng AUTHOR}
 CREATE TABLE AUTHOR (
-    AuthorID         INT           NOT NULL   IDENTITY(1,1),
-    Name             VARCHAR(255)  NOT NULL,
-    Nationality      VARCHAR(100)  NULL,
-    YearOfBirth      INT           NULL,
+    AuthorID         INT            NOT NULL   IDENTITY(1,1),
+    Name             VARCHAR(255)   NOT NULL,
+    Nationality      VARCHAR(100)   NULL,
+    YearOfBirth      INT            NULL,
 
     -- Primary Key
     CONSTRAINT PK_AUTHOR PRIMARY KEY (AuthorID),
@@ -2641,8 +2684,7 @@ CREATE TABLE AUTHOR (
         CHECK (YearOfBirth IS NULL
                OR (YearOfBirth BETWEEN 1000 AND YEAR(GETDATE()) AND YearOfBirth <= YEAR(GETDATE()) - 10))
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2651,14 +2693,14 @@ GO
 
 \subsubsection{Bảng MEMBER (Thành viên)}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng MEMBER]
+\begin{sqlcode}{Tạo bảng MEMBER}
 CREATE TABLE MEMBER (
-    MemberID         INT           NOT NULL   IDENTITY(1,1),
-    Name             VARCHAR(255)  NOT NULL,
-    Address          VARCHAR(500)  NULL,
-    Phone            VARCHAR(20)   NULL,
-    MembershipType   VARCHAR(50)   NOT NULL,
-    JoinDate         DATE          NOT NULL   DEFAULT (GETDATE()),
+    MemberID         INT            NOT NULL   IDENTITY(1,1),
+    Name             VARCHAR(255)   NOT NULL,
+    Address          VARCHAR(500)   NULL,
+    Phone            VARCHAR(20)    NULL,
+    MembershipType   VARCHAR(50)    NOT NULL,
+    JoinDate         DATE           NOT NULL   DEFAULT (GETDATE()),
 
     -- Primary Key
     CONSTRAINT PK_MEMBER PRIMARY KEY (MemberID),
@@ -2671,8 +2713,7 @@ CREATE TABLE MEMBER (
     CONSTRAINT CK_MEMBER_Phone
         CHECK (Phone IS NULL OR Phone LIKE '[0-9]%')
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2681,41 +2722,47 @@ GO
 \end{itemize}
 
 \subsubsection{Bảng BOOK (Sách)}
-
-\begin{lstlisting}[language=SQL, caption=Tạo bảng BOOK]
+\begin{sqlcode}{Tạo bảng BOOK}
 CREATE TABLE BOOK (
-    BookID             INT           NOT NULL   IDENTITY(1,1),
-    ISBN               VARCHAR(17)   NULL,
-    Title              VARCHAR(255)  NOT NULL,
-    SubjectCategory    VARCHAR(100)  NULL,
-    PublicationYear    INT           NULL,
-    PublisherID        INT           NOT NULL,
+    BookID             INT            NOT NULL   IDENTITY(1,1),
+    ISBN               VARCHAR(17)    NULL,
+    Title              VARCHAR(255)   NOT NULL,
+    SubjectCategory    VARCHAR(100)   NULL,
+    PublicationYear    INT            NULL,
+    PublisherID        INT            NOT NULL,
 
-    -- Primary Key
+    -- (* \vncomment{Primary Key} *)
     CONSTRAINT PK_BOOK PRIMARY KEY (BookID),
 
-    -- Foreign Key
+    -- (* \vncomment{Foreign Key} *)
     CONSTRAINT FK_BOOK_PUBLISHER FOREIGN KEY (PublisherID)
         REFERENCES PUBLISHER(PublisherID)
         ON UPDATE CASCADE
         ON DELETE NO ACTION,
 
-    -- Unique Constraint
+    -- (* \vncomment{Unique Constraint} *)
     CONSTRAINT UQ_BOOK_ISBN UNIQUE (ISBN),
 
-    -- Check Constraints
+    -- (* \vncomment{Check Constraints} *)
     CONSTRAINT CK_BOOK_Title
         CHECK (LEN(Title) > 0),
     CONSTRAINT CK_BOOK_PublicationYear
         CHECK (PublicationYear IS NULL
                OR PublicationYear BETWEEN 1000 AND YEAR(GETDATE()) + 5),
+    
+    -- (* \vncomment{Ngắt dòng chuỗi Regex để tránh tràn trang báo cáo} *)
     CONSTRAINT CK_BOOK_ISBN
         CHECK (ISBN IS NULL
-               OR ISBN LIKE '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]%'
-               OR ISBN LIKE '[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]')
+               -- (* \vncomment{Định dạng ISBN-10: X-XXXXX-XXXX} *)
+               OR ISBN LIKE '[0-9][0-9][0-9]-' + 
+                            '[0-9][0-9][0-9][0-9][0-9]%'
+               -- (* \vncomment{Định dạng ISBN-13: XXX-XXXXX-XXXX-X} *)
+               OR ISBN LIKE '[0-9][0-9][0-9]-' + 
+                            '[0-9][0-9][0-9][0-9][0-9]-' +
+                            '[0-9][0-9][0-9][0-9][0-9]-' +
+                            '[0-9]')
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2726,12 +2773,12 @@ GO
 
 \subsubsection{Bảng BOOK\_COPY (Bản sao sách)}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng BOOK\_COPY]
+\begin{sqlcode}{Tạo bảng BOOK\_COPY}
 CREATE TABLE BOOK_COPY (
-    CopyID         INT          NOT NULL   IDENTITY(1,1),
-    BookID         INT          NOT NULL,
-    Condition      VARCHAR(50)  NOT NULL,
-    Status         VARCHAR(20)  NOT NULL   DEFAULT ('Available'),
+    CopyID         INT             NOT NULL   IDENTITY(1,1),
+    BookID         INT             NOT NULL,
+    Condition      VARCHAR(50)     NOT NULL,
+    Status         VARCHAR(20)     NOT NULL   DEFAULT ('Available'),
 
     -- Primary Key
     CONSTRAINT PK_BOOK_COPY PRIMARY KEY (CopyID),
@@ -2748,8 +2795,7 @@ CREATE TABLE BOOK_COPY (
     CONSTRAINT CK_BOOK_COPY_Status
         CHECK (Status IN ('Available', 'Borrowed', 'Maintenance', 'Lost'))
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2760,7 +2806,7 @@ GO
 
 \subsubsection{Bảng LOAN (Mượn/trả)}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng LOAN]
+\begin{sqlcode}{Tạo bảng LOAN}
 CREATE TABLE LOAN (
     LoanID         INT             NOT NULL   IDENTITY(1,1),
     MemberID       INT             NOT NULL,
@@ -2796,8 +2842,7 @@ CREATE TABLE LOAN (
     CONSTRAINT CK_LOAN_OverdueFine
         CHECK (OverdueFine >= 0)
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
@@ -2808,7 +2853,7 @@ GO
 
 \subsubsection{Bảng trung gian BOOK\_AUTHOR}
 
-\begin{lstlisting}[language=SQL, caption=Tạo bảng BOOK\_AUTHOR]
+\begin{sqlcode}{Tạo bảng BOOK\_AUTHOR}
 CREATE TABLE BOOK_AUTHOR (
     BookID         INT   NOT NULL,
     AuthorID       INT   NOT NULL,
@@ -2826,8 +2871,7 @@ CREATE TABLE BOOK_AUTHOR (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Giải thích:}
 \begin{itemize}
@@ -2861,7 +2905,7 @@ GO
 
 \subsubsection{Procedure 1: Mượn sách}
 
-\begin{lstlisting}[language=SQL, caption=Stored Procedure mượn sách]
+\begin{sqlcode}{Stored Procedure mượn sách}
 CREATE PROCEDURE dbo.usp_BorrowBook
     @MemberID    INT,
     @CopyID      INT,
@@ -2874,14 +2918,14 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        -- 1. Kiểm tra thành viên tồn tại
+        -- (* \vncomment{1. Kiểm tra thành viên tồn tại} *)
         IF NOT EXISTS (SELECT 1 FROM MEMBER WHERE MemberID = @MemberID)
         BEGIN
             RAISERROR(N'Lỗi: Thành viên không tồn tại!', 16, 1);
             RETURN;
         END
 
-        -- 2. Kiểm tra bản sao sách tồn tại và AVAILABLE
+        -- (* \vncomment{2. Kiểm tra bản sao sách tồn tại và AVAILABLE} *)
         IF NOT EXISTS (
             SELECT 1 FROM BOOK_COPY
             WHERE CopyID = @CopyID AND Status = 'Available'
@@ -2891,14 +2935,14 @@ BEGIN
             RETURN;
         END
 
-        -- 3. Tính ngày hết hạn
+        -- (* \vncomment{3. Tính ngày hết hạn} *)
         SET @DueDate = DATEADD(DAY, @DueDays, GETDATE());
 
-        -- 4. Tạo giao dịch mượn
+        -- (* \vncomment{4. Tạo giao dịch mượn} *)
         INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate)
         VALUES (@MemberID, @CopyID, GETDATE(), @DueDate);
 
-        -- 5. Cập nhật trạng thái bản sao
+        -- (* \vncomment{5. Cập nhật trạng thái bản sao} *)
         UPDATE BOOK_COPY
         SET Status = 'Borrowed'
         WHERE CopyID = @CopyID;
@@ -2913,12 +2957,11 @@ BEGIN
         THROW;
     END CATCH
 END;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Procedure 2: Trả sách}
 
-\begin{lstlisting}[language=SQL, caption=Stored Procedure trả sách]
+\begin{sqlcode}{Stored Procedure trả sách}
 CREATE PROCEDURE dbo.usp_ReturnBook
     @CopyID      INT,
     @ReturnDate  DATE = NULL
@@ -2934,7 +2977,7 @@ BEGIN
 
         DECLARE @LoanID INT, @DueDate DATE, @DaysOverdue INT, @Fine DECIMAL(10,2);
 
-        -- 1. Lấy thông tin giao dịch mượn
+        -- (* \vncomment{1. Lấy thông tin giao dịch mượn} *)
         SELECT @LoanID = LoanID, @DueDate = DueDate
         FROM LOAN
         WHERE CopyID = @CopyID AND ReturnDate IS NULL;
@@ -2945,21 +2988,21 @@ BEGIN
             RETURN;
         END
 
-        -- 2. Tính phí phạt (nếu quá hạn)
+        -- (* \vncomment{2. Tính phí phạt (nếu quá hạn)} *)
         SET @DaysOverdue = DATEDIFF(DAY, @DueDate, @ReturnDate);
 
         IF @DaysOverdue > 0
-            SET @Fine = @DaysOverdue * 5000; -- 5000 VNĐ/ngày
+            SET @Fine = @DaysOverdue * 5000; -- (* \vncomment{5000 VNĐ/ngày} *)
         ELSE
             SET @Fine = 0;
 
-        -- 3. Cập nhật giao dịch mượn
+        -- (* \vncomment{3. Cập nhật giao dịch mượn} *)
         UPDATE LOAN
         SET ReturnDate = @ReturnDate,
             OverdueFine = @Fine
         WHERE LoanID = @LoanID;
 
-        -- 4. Cập nhật trạng thái bản sao
+        -- (* \vncomment{4. Cập nhật trạng thái bản sao} *)
         UPDATE BOOK_COPY
         SET Status = 'Available'
         WHERE CopyID = @CopyID;
@@ -2975,14 +3018,13 @@ BEGIN
         THROW;
     END CATCH
 END;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Functions}
 
 \subsubsection{Function 1: Lấy danh sách sách của tác giả}
 
-\begin{lstlisting}[language=SQL, caption=Table-Valued Function]
+\begin{sqlcode}{Table-Valued Function}
 CREATE FUNCTION dbo.ufn_GetBooksByAuthor(@AuthorName VARCHAR(255))
 RETURNS TABLE
 AS
@@ -2995,12 +3037,11 @@ RETURN
     INNER JOIN PUBLISHER p ON b.PublisherID = p.PublisherID
     WHERE a.Name = @AuthorName
 );
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Function 2: Tính phí phạt quá hạn}
 
-\begin{lstlisting}[language=SQL, caption=Scalar Function]
+\begin{sqlcode}{Scalar Function}
 CREATE FUNCTION dbo.ufn_CalculateOverdueFine(
     @DueDate DATE,
     @ReturnDate DATE,
@@ -3020,14 +3061,13 @@ BEGIN
     ELSE
         RETURN 0;
 END;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Triggers}
 
 \subsubsection{Trigger 1: Ngăn mượn sách nếu thành viên quá hạn}
 
-\begin{lstlisting}[language=SQL, caption=Trigger kiểm tra thành viên bị quá hạn]
+\begin{sqlcode}{Trigger kiểm tra thành viên bị quá hạn}
 CREATE TRIGGER trg_PreventBorrow_OverdueMember
 ON LOAN
 INSTEAD OF INSERT
@@ -3038,7 +3078,7 @@ BEGIN
     DECLARE @MemberID INT;
     SELECT @MemberID = MemberID FROM inserted;
 
-    -- Kiểm tra thành viên có sách quá hạn chưa trả
+    -- (* \vncomment{Kiểm tra thành viên có sách quá hạn chưa trả} *)
     IF EXISTS (
         SELECT 1 FROM LOAN
         WHERE MemberID = @MemberID
@@ -3053,17 +3093,16 @@ BEGIN
         RETURN;
     END
 
-    -- Nếu không vi phạm, thực hiện INSERT
+    -- (* \vncomment{Nếu không vi phạm, thực hiện INSERT} *)
     INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine)
     SELECT MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine
     FROM inserted;
 END;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Trigger 2: Tự động tính phí phạt khi trả sách}
 
-\begin{lstlisting}[language=SQL, caption=Trigger tự động tính phí phạt]
+\begin{sqlcode}{Trigger tự động tính phí phạt}
 CREATE TRIGGER trg_CalculateOverdueFine
 ON LOAN
 AFTER UPDATE
@@ -3071,7 +3110,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Chỉ xử lý khi ReturnDate được cập nhật từ NULL sang có giá trị
+    -- (* \vncomment{Chỉ xử lý khi ReturnDate được cập nhật từ NULL sang có giá trị} *)
     IF UPDATE(ReturnDate)
     BEGIN
         UPDATE LOAN
@@ -3085,14 +3124,13 @@ BEGIN
         WHERE i.ReturnDate IS NOT NULL;
     END
 END;
-GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Các câu truy vấn mẫu}
 
 \subsubsection{Query 1: Liệt kê sách đang được mượn}
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Liệt kê sách đang được mượn}
 SELECT
     l.LoanID,
     m.Name AS MemberName,
@@ -3114,11 +3152,11 @@ INNER JOIN BOOK_COPY bc ON l.CopyID = bc.CopyID
 INNER JOIN BOOK b ON bc.BookID = b.BookID
 WHERE l.ReturnDate IS NULL
 ORDER BY l.DueDate;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Query 2: Thống kê sách được mượn nhiều nhất}
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Thống kê sách được mượn nhiều nhất}
 SELECT TOP 10
     b.BookID,
     b.Title,
@@ -3129,11 +3167,11 @@ INNER JOIN BOOK_COPY bc ON b.BookID = bc.BookID
 LEFT JOIN LOAN l ON bc.CopyID = l.CopyID
 GROUP BY b.BookID, b.Title, b.ISBN
 ORDER BY TimesBorrowed DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Query 3: Thành viên có sách quá hạn}
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Thành viên có sách quá hạn}
 SELECT
     m.MemberID,
     m.Name,
@@ -3149,7 +3187,7 @@ INNER JOIN BOOK b ON bc.BookID = b.BookID
 WHERE l.ReturnDate IS NULL
   AND l.DueDate < CAST(GETDATE() AS DATE)
 ORDER BY DaysOverdue DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Kết luận báo cáo 4}
 
@@ -3273,44 +3311,42 @@ Báo cáo 5 là báo cáo cuối cùng, tổng kết toàn bộ quá trình thi�
 
 \subsubsection{Dữ liệu bảng PUBLISHER}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào PUBLISHER]
+\begin{sqlcode}{INSERT dữ liệu vào PUBLISHER}
 INSERT INTO PUBLISHER (Name, Address, ContactNumber) VALUES
-(N'Nhà Xuất Bản Giáo dục Việt Nam', N'81 Trần Hưng Đạo, Hà Nội', '024-38225162'),
-(N'Nhà Xuất Bản Trẻ', N'161B Nguyễn Du, Quận 1, TP.HCM', '028-38223642'),
-(N'Nhà Xuất Bản Tổng hợp TP.HCM', N'61 Nguyễn Thị Minh Khai, Quận 1, TP.HCM', '028-38229685'),
-(N'Nhà Xuất Bản Đà Nẵng', N'36 Điện Biên Phủ, TP. Đà Nẵng', '0236-3822565'),
-(N'NXB Công an Nhân dân', N'43 Trần Phú, Hà Nội', '024-38263267'),
-(N'NXB Lao động', N'53 Nguyễn Du, Hai Bà Trưng, Hà Nội', '024-38225261'),
-(N'NXB Hồng Đức', N'36A Tràng Tiền, Hoàn Kiếm, Hà Nội', '024-39382008'),
-(N'NXB Alpha Books', N'46 Đường số 7, Phường 4, Quận 5, TP.HCM', '028-38388067');
-GO
-\end{lstlisting}
+(N'(*Nhà Xuất Bản Giáo dục Việt Nam*)', N'(*81 Trần Hưng Đạo, Hà Nội*)', '024-38225162'),
+(N'(*Nhà Xuất Bản Trẻ*)', N'(*161B Nguyễn Du, Quận 1, TP.HCM*)', '028-38223642'),
+(N'(*Nhà Xuất Bản Tổng hợp TP.HCM*)', N'(*61 Nguyễn Thị Minh Khai, Quận 1, TP.HCM*)', '028-38229685'),
+(N'(*Nhà Xuất Bản Đà Nẵng*)', N'(*36 Điện Biên Phủ, TP. Đà Nẵng*)', '0236-3822565'),
+(N'(*NXB Công an Nhân dân*)', N'(*43 Trần Phú, Hà Nội*)', '024-38263267'),
+(N'(*NXB Lao động*)', N'(*53 Nguyễn Du, Hai Bà Trưng, Hà Nội*)', '024-38225261'),
+(N'(*NXB Hồng Đức*)', N'(*36A Tràng Tiền, Hoàn Kiếm, Hà Nội*)', '024-39382008'),
+(N'(*NXB Alpha Books*)', N'(*46 Đường số 7, Phường 4, Quận 5, TP.HCM*)', '028-38388067');
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng AUTHOR}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào AUTHOR]
+\begin{sqlcode}{INSERT dữ liệu vào AUTHOR}
 INSERT INTO AUTHOR (Name, Nationality, YearOfBirth) VALUES
-(N'Nguyen Nhat Anh', N'Việt Nam', 1980),
-(N'To Hoai', N'Việt Nam', 1965),
-(N'Nam Cao', N'Việt Nam', 1975),
-(N'Tran Dang Khoa', N'Việt Nam', 1988),
-(N'J.K. Rowling', N'Anh', 1965),
-(N'Haruki Murakami', N'Nhật Bản', 1949),
-(N'George Orwell', N'Anh', 1903),
-(N'F. Scott Fitzgerald', N'Mỹ', 1896),
-(N'Ernest Hemingway', N'Mỹ', 1899),
-(N'Jane Austen', N'Anh', 1775),
-(N'Leo Tolstoy', N'Nga', 1828),
-(N'Victor Hugo', N'Pháp', 1802),
-(N'Albert Camus', N'Pháp', 1913),
-(N'Gabriel Garcia Marquez', N'Colombia', 1927),
-(N'Isabel Allende', N'Chile', 1942);
-GO
-\end{lstlisting}
+(N'Nguyen Nhat Anh', N'(*Việt Nam*)', 1980),
+(N'To Hoai', N'(*Việt Nam*)', 1965),
+(N'Nam Cao', N'(*Việt Nam*)', 1975),
+(N'Tran Dang Khoa', N'(*Việt Nam*)', 1988),
+(N'J.K. Rowling', N'(*Anh*)', 1965),
+(N'Haruki Murakami', N'(*Nhật Bản*)', 1949),
+(N'George Orwell', N'(*Anh*)', 1903),
+(N'F. Scott Fitzgerald', N'(*Mỹ*)', 1896),
+(N'Ernest Hemingway', N'(*Mỹ*)', 1899),
+(N'Jane Austen', N'(*Anh*)', 1775),
+(N'Leo Tolstoy', N'(*Nga*)', 1828),
+(N'Victor Hugo', N'(*Pháp*)', 1802),
+(N'Albert Camus', N'(*Pháp*)', 1913),
+(N'Gabriel Garcia Marquez', N'(*Colombia*)', 1927),
+(N'Isabel Allende', N'(*Chile*)', 1942);
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng MEMBER}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào MEMBER]
+\begin{sqlcode}{INSERT dữ liệu vào MEMBER}
 INSERT INTO MEMBER (Name, Address, Phone, MembershipType) VALUES
 (N'Nguyen Van An', N'123 Đường ABC, Quận 1, TP.HCM', '0901234567', 'Student'),
 (N'Tran Thi Bich', N'456 Đường XYZ, Quận 3, TP.HCM', '0912345678', 'Faculty'),
@@ -3323,11 +3359,11 @@ INSERT INTO MEMBER (Name, Address, Phone, MembershipType) VALUES
 (N'Tran Van Tan', N'369 Đường VWX, Huế', '0989012345', 'Premium'),
 (N'Le Thi Uyen', N'741 Đường YZ, Buôn Ma Thuột', '0990123456', 'Faculty');
 GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng BOOK}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào BOOK]
+\begin{sqlcode}{INSERT dữ liệu vào BOOK}
 INSERT INTO BOOK (ISBN, Title, SubjectCategory, PublicationYear, PublisherID) VALUES
 ('978-604-0-00123-4', N'Tôi thấy hoa vàng trên cỏ xanh', N'Văn học', 2010, 1),
 ('978-604-0-00234-5', N'Mắt biếc', N'Văn học', 2018, 1),
@@ -3350,11 +3386,11 @@ INSERT INTO BOOK (ISBN, Title, SubjectCategory, PublicationYear, PublisherID) VA
 ('978-604-0-00678-9', N'Chí Phèo', N'Văn học', 2009, 1),
 ('978-604-0-00789-0', N'Số đỏ', N'Văn học', 2013, 2);
 GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng BOOK\_AUTHOR}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào BOOK\_AUTHOR]
+\begin{sqlcode}{INSERT dữ liệu vào BOOK\_AUTHOR}
 INSERT INTO BOOK_AUTHOR (BookID, AuthorID) VALUES
 (1, 1),  -- Tôi thấy hoa vàng trên cỏ xanh - Nguyen Nhat Anh
 (2, 2),  -- Mắt biếc - To Hoai
@@ -3377,11 +3413,11 @@ INSERT INTO BOOK_AUTHOR (BookID, AuthorID) VALUES
 (19, 4),  -- Chí Phèo - Nam Cao
 (20, 3);  -- Số đỏ - Nam Cao
 GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng BOOK\_COPY}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào BOOK\_COPY]
+\begin{sqlcode}{INSERT dữ liệu vào BOOK\_COPY}
 INSERT INTO BOOK_COPY (BookID, Condition, Status) VALUES
 -- Sách tiếng Việt
 (1, 'New', 'Available'), (1, 'New', 'Available'), (1, 'Good', 'Available'),
@@ -3409,11 +3445,11 @@ INSERT INTO BOOK_COPY (BookID, Condition, Status) VALUES
 (19, 'Fair', 'Available'),
 (20, 'New', 'Available'), (20, 'Good', 'Available');
 GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Dữ liệu bảng LOAN}
 
-\begin{lstlisting}[language=SQL, caption=INSERT dữ liệu vào LOAN]
+\begin{sqlcode}{INSERT dữ liệu vào LOAN}
 INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine) VALUES
 -- Mượn đang hoạt động (chưa trả)
 (1, 1, '2026-01-15', '2026-01-29', NULL, 0),
@@ -3434,7 +3470,7 @@ INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine
 (9, 16, '2025-11-20', '2025-12-04', '2025-12-10', 60000), -- 12 ngày quá hạn
 (10, 17, '2025-11-25', '2025-12-09', '2025-12-08', 0);   -- Trả sớm
 GO
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Tổng kết dữ liệu đã chèn}
 
@@ -3461,12 +3497,12 @@ GO
 
 \textbf{Kịch bản test:} Thành viên ID=1 mượn bản sao ID=2
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Mượn sách thành công}
 EXEC dbo.usp_BorrowBook
     @MemberID = 1,
     @CopyID = 3,
     @DueDays = 14;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3477,22 +3513,22 @@ EXEC dbo.usp_BorrowBook
 \end{itemize}
 
 \textbf{Verifying query:}
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Verifying query}
 SELECT l.*, bc.Status
 FROM LOAN l
 INNER JOIN BOOK_COPY bc ON l.CopyID = bc.CopyID
 WHERE l.CopyID = 3 AND l.ReturnDate IS NULL;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Test 2: Trả sách đúng hạn}
 
 \textbf{Kịch bản test:} Trả bản sao ID=3 (vừa mượn ở Test 1)
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Trả sách đúng hạn}
 EXEC dbo.usp_ReturnBook
     @CopyID = 3,
     @ReturnDate = '2026-02-05';
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3506,11 +3542,11 @@ EXEC dbo.usp_ReturnBook
 
 \textbf{Kịch bản test:} Trả bản sao ID=5 (đã mượn từ 2026-01-20, hạn 2026-02-03, trả 2026-02-10)
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Trả sách quá hạn}
 EXEC dbo.usp_ReturnBook
     @CopyID = 5,
     @ReturnDate = '2026-02-10';
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3522,12 +3558,12 @@ EXEC dbo.usp_ReturnBook
 
 \textbf{Kịch bản test:} Thử mượn bản sao đã được mượn
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Mượn sách khi sách không có sẵn}
 EXEC dbo.usp_BorrowBook
     @MemberID = 2,
     @CopyID = 5,  -- Copy này đang Borrowed
     @DueDays = 14;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3541,9 +3577,9 @@ EXEC dbo.usp_BorrowBook
 
 \textbf{Kịch bản test:} Lấy danh sách sách của J.K. Rowling
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Test ufn\_GetBooksByAuthor}
 SELECT * FROM dbo.ufn_GetBooksByAuthor('J.K. Rowling');
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3555,7 +3591,7 @@ SELECT * FROM dbo.ufn_GetBooksByAuthor('J.K. Rowling');
 
 \textbf{Kịch bản test:} Tính phí phạt cho các trường hợp khác nhau
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Test ufn\_CalculateOverdueFine}
 -- Trả đúng hạn
 SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-10', 5000) AS Fine;
 -- Kết quả: 0
@@ -3567,7 +3603,7 @@ SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-16', 5000) AS Fine;
 -- Chưa trả (NULL)
 SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', NULL, 5000) AS Fine;
 -- Kết quả: 0
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Kiểm tra Triggers}
 
@@ -3575,13 +3611,13 @@ SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', NULL, 5000) AS Fine;
 
 \textbf{Kịch bản test:} Thành viên ID=4 đang có sách quá hạn (CopyID=10)
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Test Trigger 1}
 -- Thử mượn sách khác
 EXEC dbo.usp_BorrowBook
     @MemberID = 4,
     @CopyID = 6,
     @DueDays = 14;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3590,20 +3626,20 @@ EXEC dbo.usp_BorrowBook
 \end{itemize}
 
 \textbf{Sau khi trả sách quá hạn:}
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Sau khi trả sách quá hạn}
 -- Trả sách quá hạn
 EXEC dbo.usp_ReturnBook @CopyID = 10, @ReturnDate = '2026-02-05';
 
 -- Thử mượn lại
 EXEC dbo.usp_BorrowBook @MemberID = 4, @CopyID = 6, @DueDays = 14;
 -- Kết quả: Mượn thành công!
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Test Trigger 2: Tự động tính phí phạt}
 
 \textbf{Kịch bản test:} Update ReturnDate cho giao dịch quá hạn
 
-\begin{lstlisting}[language=SQL]
+\begin{sqlcode}{Test Trigger 2}
 -- Tạo giao dịch mượn
 INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine)
 VALUES (1, 4, '2026-01-01', '2026-01-15', NULL, 0);
@@ -3617,7 +3653,7 @@ WHERE CopyID = 4 AND ReturnDate IS NULL;
 SELECT LoanID, DueDate, ReturnDate, OverdueFine
 FROM LOAN
 WHERE CopyID = 4;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
 \begin{itemize}
@@ -3628,7 +3664,7 @@ WHERE CopyID = 4;
 
 \subsubsection{Báo cáo 1: Top 10 sách được mượn nhiều nhất}
 
-\begin{lstlisting}[language=SQL, caption=Thống kê sách phổ biến]
+\begin{sqlcode}{Thống kê sách phổ biến}
 SELECT TOP 10
     b.BookID,
     b.Title,
@@ -3639,7 +3675,7 @@ INNER JOIN BOOK_COPY bc ON b.BookID = bc.BookID
 LEFT JOIN LOAN l ON bc.CopyID = l.CopyID
 GROUP BY b.BookID, b.Title
 ORDER BY TotalLoans DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mẫu:}
 \begin{table}[H]
@@ -3656,7 +3692,7 @@ ORDER BY TotalLoans DESC;
 
 \subsubsection{Báo cáo 2: Thành viên có sách quá hạn}
 
-\begin{lstlisting}[language=SQL, caption=Danh sách thành viên quá hạn]
+\begin{sqlcode}{Danh sách thành viên quá hạn}
 SELECT
     m.MemberID,
     m.Name,
@@ -3674,7 +3710,7 @@ INNER JOIN BOOK b ON bc.BookID = b.BookID
 WHERE l.ReturnDate IS NULL
   AND l.DueDate < CAST(GETDATE() AS DATE)
 ORDER BY DaysOverdue DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \textbf{Kết quả mẫu:}
 \begin{table}[H]
@@ -3689,7 +3725,7 @@ Pham Thi Dung & The Great Gatsby & 2026-01-10 & 12 & 60,000 VNĐ \\ \hline
 
 \subsubsection{Báo cáo 3: Thống kê theo nhà xuất bản}
 
-\begin{lstlisting}[language=SQL, caption=Thống kê theo nhà xuất bản]
+\begin{sqlcode}{Thống kê theo nhà xuất bản}
 SELECT
     p.PublisherID,
     p.Name AS PublisherName,
@@ -3702,11 +3738,11 @@ LEFT JOIN BOOK_COPY bc ON b.BookID = bc.BookID
 LEFT JOIN LOAN l ON bc.CopyID = l.CopyID
 GROUP BY p.PublisherID, p.Name
 ORDER BY TotalBooks DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsubsection{Báo cáo 4: Doanh thu phí phạt theo tháng}
 
-\begin{lstlisting}[language=SQL, caption=Thống kê doanh thu phí phạt]
+\begin{sqlcode}{Thống kê doanh thu phí phạt}
 SELECT
     YEAR(l.ReturnDate) AS Year,
     MONTH(l.ReturnDate) AS Month,
@@ -3718,7 +3754,7 @@ WHERE l.ReturnDate IS NOT NULL
   AND l.OverdueFine > 0
 GROUP BY YEAR(l.ReturnDate), MONTH(l.ReturnDate)
 ORDER BY Year DESC, Month DESC;
-\end{lstlisting}
+\end{sqlcode}
 
 \subsection{Final Thoughts - Tổng kết và Đánh giá}
 

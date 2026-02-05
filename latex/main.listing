@@ -1,0 +1,11 @@
+SELECT
+    YEAR(l.ReturnDate) AS Year,
+    MONTH(l.ReturnDate) AS Month,
+    COUNT(*) AS TotalReturned,
+    SUM(l.OverdueFine) AS TotalFineAmount,
+    AVG(l.OverdueFine) AS AverageFine
+FROM LOAN l
+WHERE l.ReturnDate IS NOT NULL
+  AND l.OverdueFine > 0
+GROUP BY YEAR(l.ReturnDate), MONTH(l.ReturnDate)
+ORDER BY Year DESC, Month DESC;
