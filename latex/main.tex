@@ -4,33 +4,6 @@
 \documentclass[12pt,a4paper]{article}
 
 
-% Định nghĩa lại để fix lỗi Tiếng Việt
-\setmonofont{Courier New}
-\newtcblisting{sqlcode}[2][]{
-    arc=0mm,
-    colback=gray!5,
-    colframe=gray!75!black,
-    fonttitle=\bfseries\small,
-    title=#2,
-    listing only,
-    listing engine=listings,
-    listing options={
-        language=SQL,
-        basicstyle=\ttfamily\small,
-        keywordstyle=\color{blue}\bfseries,
-        commentstyle=\color{green!50!black}\itshape,
-        stringstyle=\color{red},
-        breaklines=true,
-        showstringspaces=false,
-        tabsize=2,
-        extendedchars=true,
-        columns=fullflexible,
-        keepspaces=true
-    },
-    #1
-}
-
-
 % thêm svg vào, nhưng khó dùng, chưa sài
 \usepackage[inkscapelatex=false]{svg}
 
@@ -90,7 +63,12 @@
 \tcbuselibrary{listingsutf8, skins}
 
 % Định nghĩa lại style cho khối Code SQL (Đã Fix lỗi Tiếng Việt)
+% Cần thêm thư viện breakable để cho phép ngắt trang
+\tcbuselibrary{listingsutf8, skins, breakable} 
+
 \newtcblisting{sqlcode}[2][]{
+    breakable, % QUAN TRỌNG: Cho phép code tự xuống trang mới
+    enhanced,
     arc=0mm,
     colback=gray!5,
     colframe=gray!75!black,
@@ -100,21 +78,21 @@
     listing engine=listings,
     listing options={
         language=SQL,
-        basicstyle=\ttfamily\small, % Font Courier New
+        basicstyle=\ttfamily\small,
         keywordstyle=\color{blue}\bfseries,
         commentstyle=\color{green!50!black}\itshape,
         stringstyle=\color{red},
-        breaklines=true,
+        breaklines=true, % Tự động xuống dòng khi câu lệnh quá dài
         showstringspaces=false,
         tabsize=2,
-        % Cấu hình quan trọng để fix lỗi Tiếng Việt:
-        escapeinside={(*}{*)}, % Dùng (* ... *) để viết Tiếng Việt
+        escapeinside={(*}{*)},
         inputencoding=utf8,
         extendedchars=true,
+        columns=fullflexible,
+        keepspaces=true
     },
     #1
 }
-
 % Định nghĩa lệnh để format comment Tiếng Việt cho đẹp (Màu xanh + Nghiêng)
 \newcommand{\vncomment}[1]{\textit{\color{green!50!black}#1}}
 
@@ -2921,7 +2899,7 @@ BEGIN
         -- (* \vncomment{1. Kiểm tra thành viên tồn tại} *)
         IF NOT EXISTS (SELECT 1 FROM MEMBER WHERE MemberID = @MemberID)
         BEGIN
-            RAISERROR(N'Lỗi: Thành viên không tồn tại!', 16, 1);
+            RAISERROR(N'(*Lỗi: Thành viên không tồn tại!*)', 16, 1);
             RETURN;
         END
 
@@ -2931,7 +2909,7 @@ BEGIN
             WHERE CopyID = @CopyID AND Status = 'Available'
         )
         BEGIN
-            RAISERROR(N'Lỗi: Sách không có sẵn để mượn!', 16, 1);
+            RAISERROR(N'(*Lỗi: Sách không có sẵn để mượn!*)', 16, 1);
             RETURN;
         END
 
@@ -2949,7 +2927,7 @@ BEGIN
 
         COMMIT TRANSACTION;
 
-        SELECT N'Mượn sách thành công!' AS Message,
+        SELECT N'(*Mượn sách thành công!*)' AS Message,
                @DueDate AS DueDate;
     END TRY
     BEGIN CATCH
@@ -2984,7 +2962,7 @@ BEGIN
 
         IF @LoanID IS NULL
         BEGIN
-            RAISERROR(N'Lỗi: Không tìm thấy giao dịch mượn đang hoạt động!', 16, 1);
+            RAISERROR(N'(*Lỗi: Không tìm thấy giao dịch mượn đang hoạt động!*)', 16, 1);
             RETURN;
         END
 
@@ -3009,7 +2987,7 @@ BEGIN
 
         COMMIT TRANSACTION;
 
-        SELECT N'Trả sách thành công!' AS Message,
+        SELECT N'(*Trả sách thành công!*)' AS Message,
                @DaysOverdue AS DaysOverdue,
                @Fine AS OverdueFine;
     END TRY
@@ -3087,7 +3065,7 @@ BEGIN
     )
     BEGIN
         RAISERROR(
-            N'Lỗi: Thành viên đang có sách quá hạn chưa trả. Không thể mượn thêm!',
+            N'(*Lỗi: Thành viên đang có sách quá hạn chưa trả. Không thể mượn thêm!*)',
             16, 1
         );
         RETURN;
@@ -3141,10 +3119,10 @@ SELECT
     l.DueDate,
     CASE
         WHEN l.ReturnDate IS NULL AND GETDATE() > l.DueDate
-            THEN N'Quá hạn'
+            THEN N'(*Quá hạn*)'
         WHEN l.ReturnDate IS NULL
-            THEN N'Đang mượn'
-        ELSE N'Đã trả'
+            THEN N'(*Đang mượn*)'
+        ELSE N'(*Đã trả*)'
     END AS Status
 FROM LOAN l
 INNER JOIN MEMBER m ON l.MemberID = m.MemberID
@@ -3348,16 +3326,16 @@ INSERT INTO AUTHOR (Name, Nationality, YearOfBirth) VALUES
 
 \begin{sqlcode}{INSERT dữ liệu vào MEMBER}
 INSERT INTO MEMBER (Name, Address, Phone, MembershipType) VALUES
-(N'Nguyen Van An', N'123 Đường ABC, Quận 1, TP.HCM', '0901234567', 'Student'),
-(N'Tran Thi Bich', N'456 Đường XYZ, Quận 3, TP.HCM', '0912345678', 'Faculty'),
-(N'Le Van Cuong', N'789 Đường DEF, Quận 5, TP.HCM', '0923456789', 'Standard'),
-(N'Pham Thi Dung', N'321 Đường GHI, Đà Nẵng', '0934567890', 'Premium'),
-(N'Vu Van Em', N'654 Đường JKL, Hà Nội', '0945678901', 'Student'),
-(N'Do Thi Phong', N'987 Đường MNO, Hải Phòng', '0956789012', 'Faculty'),
-(N'Hoang Van Quy', N'147 Đường PQR, Cần Thơ', '0967890123', 'Standard'),
-(N'Nguyen Thi Sang', N'258 Đường STU, Nghệ An', '0978901234', 'Student'),
-(N'Tran Van Tan', N'369 Đường VWX, Huế', '0989012345', 'Premium'),
-(N'Le Thi Uyen', N'741 Đường YZ, Buôn Ma Thuột', '0990123456', 'Faculty');
+(N'Nguyen Van An', N'(*123 Đường ABC, Quận 1, TP.HCM*)', '0901234567', 'Student'),
+(N'Tran Thi Bich', N'(*456 Đường XYZ, Quận 3, TP.HCM*)', '0912345678', 'Faculty'),
+(N'Le Van Cuong', N'(*789 Đường DEF, Quận 5, TP.HCM*)', '0923456789', 'Standard'),
+(N'Pham Thi Dung', N'(*321 Đường GHI, Đà Nẵng*)', '0934567890', 'Premium'),
+(N'Vu Van Em', N'(*654 Đường JKL, Hà Nội*)', '0945678901', 'Student'),
+(N'Do Thi Phong', N'(*987 Đường MNO, Hải Phòng*)', '0956789012', 'Faculty'),
+(N'Hoang Van Quy', N'(*147 Đường PQR, Cần Thơ*)', '0967890123', 'Standard'),
+(N'Nguyen Thi Sang', N'(*258 Đường STU, Nghệ An*)', '0978901234', 'Student'),
+(N'Tran Van Tan', N'(*369 Đường VWX, Huế*)', '0989012345', 'Premium'),
+(N'Le Thi Uyen', N'(*741 Đường YZ, Buôn Ma Thuột*)', '0990123456', 'Faculty');
 GO
 \end{sqlcode}
 
@@ -3365,12 +3343,12 @@ GO
 
 \begin{sqlcode}{INSERT dữ liệu vào BOOK}
 INSERT INTO BOOK (ISBN, Title, SubjectCategory, PublicationYear, PublisherID) VALUES
-('978-604-0-00123-4', N'Tôi thấy hoa vàng trên cỏ xanh', N'Văn học', 2010, 1),
-('978-604-0-00234-5', N'Mắt biếc', N'Văn học', 2018, 1),
-('978-604-0-00345-6', N'Cho tôi xin một vé đi tuổi thơ', N'Văn học', 2015, 2),
-('978-604-0-00456-7', N'Bên kia rào cấm', N'Văn học', 2012, 3),
-('978-0-7475-3269-9', N'Harry Potter và the Philosopher''s Stone', N'Fantasy', 1997, 5),
-('978-0-7475-3849-3', N'Harry Potter và Chamber of Secrets', N'Fantasy', 1998, 5),
+('978-604-0-00123-4', N'(*Tôi thấy hoa vàng trên cỏ xanh*)', N'(*Văn học*)', 2010, 1),
+('978-604-0-00234-5', N'(*Mắt biếc*)', N'(*Văn học*)', 2018, 1),
+('978-604-0-00345-6', N'(*Cho tôi xin một vé đi tuổi thơ*)', N'(*Văn học*)', 2015, 2),
+('978-604-0-00456-7', N'(*Bên kia rào cấm*)', N'(*Văn học*)', 2012, 3),
+('978-0-7475-3269-9', N'(*Harry Potter và the Philosopher''s Stone*)', N'Fantasy', 1997, 5),
+('978-0-7475-3849-3', N'(*Harry Potter và Chamber of Secrets*)', N'Fantasy', 1998, 5),
 ('978-4-77-01536-8', N'Norwegian Wood', N'Romance', 1987, 4),
 ('978-0-452-28423-4', N'1Q84', N'Fiction', 2009, 4),
 ('978-0-452-28423-5', N'Animal Farm', N'Political Fiction', 1945, 6),
@@ -3382,36 +3360,36 @@ INSERT INTO BOOK (ISBN, Title, SubjectCategory, PublicationYear, PublisherID) VA
 ('978-0-375-40653-5', N'The Plague', N'Philosophy', 1947, 10),
 ('978-0-06-088328-7', N'One Hundred Years of Solitude', N'Magic Realism', 1967, 11),
 ('978-1-5011-7033-3', N'The House of the Spirits', N'Magic Realism', 1982, 7),
-('978-604-0-00567-8', N'Làng', N'Văn học', 2011, 1),
-('978-604-0-00678-9', N'Chí Phèo', N'Văn học', 2009, 1),
-('978-604-0-00789-0', N'Số đỏ', N'Văn học', 2013, 2);
+('978-604-0-00567-8', N'(*Làng*)', N'(*Văn học*)', 2011, 1),
+('978-604-0-00678-9', N'(*Chí Phèo*)', N'(*Văn học*)', 2009, 1),
+('978-604-0-00789-0', N'(*Số đỏ*)', N'(*Văn học*)', 2013, 2);
 GO
 \end{sqlcode}
 
 \subsubsection{Dữ liệu bảng BOOK\_AUTHOR}
 
-\begin{sqlcode}{INSERT dữ liệu vào BOOK\_AUTHOR}
+\begin{sqlcode}{INSERT dữ liệu vào BOOK_AUTHOR}
 INSERT INTO BOOK_AUTHOR (BookID, AuthorID) VALUES
-(1, 1),  -- Tôi thấy hoa vàng trên cỏ xanh - Nguyen Nhat Anh
-(2, 2),  -- Mắt biếc - To Hoai
-(3, 3),  -- Cho tôi xin một vé đi tuổi thơ - Nguyen Nhat Anh
-(4, 4),  -- Bên kia rào cấm - Tran Dang Khoa
-(5, 5),  -- Harry Potter 1 - J.K. Rowling
-(6, 5),  -- Harry Potter 2 - J.K. Rowling
-(7, 6),  -- Norwegian Wood - Haruki Murakami
-(8, 6),  -- 1Q84 - Haruki Murakami
-(9, 7),  -- Animal Farm - George Orwell
-(10, 8), -- The Great Gatsby - F. Scott Fitzgerald
-(11, 9), -- For Whom the Bell Tolls - Ernest Hemingway
-(12, 10),-- Pride and Prejudice - Jane Austen
-(13, 11),-- War and Peace - Leo Tolstoy
-(14, 12),-- Les Misérables - Victor Hugo
-(15, 13),-- The Plague - Albert Camus
-(16, 14),-- One Hundred Years of Solitude - Gabriel Garcia Marquez
-(17, 15),-- The House of the Spirits - Isabel Allende
-(18, 2),  -- Làng - To Hoai
-(19, 4),  -- Chí Phèo - Nam Cao
-(20, 3);  -- Số đỏ - Nam Cao
+(1, 1),   -- (*Tôi thấy hoa vàng trên cỏ xanh - Nguyen Nhat Anh*)
+(2, 2),   -- (*Mắt biếc - To Hoai*)
+(3, 3),   -- (*Cho tôi xin một vé đi tuổi thơ - Nguyen Nhat Anh*)
+(4, 4),   -- (*Bên kia rào cấm - Tran Dang Khoa*)
+(5, 5),   -- (*Harry Potter 1 - J.K. Rowling*)
+(6, 5),   -- (*Harry Potter 2 - J.K. Rowling*)
+(7, 6),   -- (*Norwegian Wood - Haruki Murakami*)
+(8, 6),   -- (*1Q84 - Haruki Murakami*)
+(9, 7),   -- (*Animal Farm - George Orwell*)
+(10, 8),  -- (*The Great Gatsby - F. Scott Fitzgerald*)
+(11, 9),  -- (*For Whom the Bell Tolls - Ernest Hemingway*)
+(12, 10), -- (*Pride and Prejudice - Jane Austen*)
+(13, 11), -- (*War and Peace - Leo Tolstoy*)
+(14, 12), -- (*Les Misérables - Victor Hugo*)
+(15, 13), -- (*The Plague - Albert Camus*)
+(16, 14), -- (*One Hundred Years of Solitude - Gabriel Garcia Marquez*)
+(17, 15), -- (*The House of the Spirits - Isabel Allende*)
+(18, 2),  -- (*Làng - To Hoai*)
+(19, 4),  -- (*Chí Phèo - Nam Cao*)
+(20, 3);  -- (*Số đỏ - Nam Cao*)
 GO
 \end{sqlcode}
 
@@ -3451,24 +3429,24 @@ GO
 
 \begin{sqlcode}{INSERT dữ liệu vào LOAN}
 INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine) VALUES
--- Mượn đang hoạt động (chưa trả)
+-- (*Mượn đang hoạt động (chưa trả)*)
 (1, 1, '2026-01-15', '2026-01-29', NULL, 0),
 (2, 5, '2026-01-20', '2026-02-03', NULL, 0),
 (3, 7, '2026-01-25', '2026-02-08', NULL, 0),
-(4, 10, '2026-01-10', '2026-01-24', NULL, 0),  -- Quá hạn!
+(4, 10, '2026-01-10', '2026-01-24', NULL, 0),  -- (*Quá hạn!*)
 (5, 12, '2026-01-28', '2026-02-11', NULL, 0),
--- Mượn đã trả (đúng hạn)
+-- (*Mượn đã trả (đúng hạn)*)
 (1, 2, '2025-12-01', '2025-12-15', '2025-12-14', 0),
 (2, 4, '2025-12-05', '2025-12-19', '2025-12-18', 0),
 (3, 8, '2025-12-10', '2025-12-24', '2025-12-22', 0),
 (6, 9, '2025-12-15', '2025-12-29', '2025-12-28', 0),
 (7, 11, '2025-12-20', '2026-01-03', '2026-01-02', 0),
--- Mượn đã trả (quá hạn - có phạt)
-(4, 13, '2025-11-01', '2025-11-15', '2025-11-20', 25000),  -- 5 ngày quá hạn
-(5, 14, '2025-11-10', '2025-11-24', '2025-11-30', 60000),  -- 12 ngày quá hạn
-(8, 15, '2025-11-15', '2025-11-29', '2025-11-25', 0),    -- Trả sớm
-(9, 16, '2025-11-20', '2025-12-04', '2025-12-10', 60000), -- 12 ngày quá hạn
-(10, 17, '2025-11-25', '2025-12-09', '2025-12-08', 0);   -- Trả sớm
+-- (*Mượn đã trả (quá hạn - có phạt)*)
+(4, 13, '2025-11-01', '2025-11-15', '2025-11-20', 25000),  -- (*5 ngày quá hạn*)
+(5, 14, '2025-11-10', '2025-11-24', '2025-11-30', 60000),  -- (*12 ngày quá hạn*)
+(8, 15, '2025-11-15', '2025-11-29', '2025-11-25', 0),    -- (*Trả sớm*)
+(9, 16, '2025-11-20', '2025-12-04', '2025-12-10', 60000), -- (*12 ngày quá hạn*)
+(10, 17, '2025-11-25', '2025-12-09', '2025-12-08', 0);    -- (*Trả sớm*)
 GO
 \end{sqlcode}
 
@@ -3561,7 +3539,7 @@ EXEC dbo.usp_ReturnBook
 \begin{sqlcode}{Mượn sách khi sách không có sẵn}
 EXEC dbo.usp_BorrowBook
     @MemberID = 2,
-    @CopyID = 5,  -- Copy này đang Borrowed
+    @CopyID = 5,  -- (*Copy này đang Borrowed*)
     @DueDays = 14;
 \end{sqlcode}
 
@@ -3591,18 +3569,18 @@ SELECT * FROM dbo.ufn_GetBooksByAuthor('J.K. Rowling');
 
 \textbf{Kịch bản test:} Tính phí phạt cho các trường hợp khác nhau
 
-\begin{sqlcode}{Test ufn\_CalculateOverdueFine}
--- Trả đúng hạn
+\begin{sqlcode}{Test ufn_CalculateOverdueFine}
+-- (*Trả đúng hạn*)
 SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-10', 5000) AS Fine;
--- Kết quả: 0
+-- (*Kết quả: 0*)
 
--- Trả muộn 5 ngày
+-- (*Trả muộn 5 ngày*)
 SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-16', 5000) AS Fine;
--- Kết quả: 25000
+-- (*Kết quả: 25000*)
 
--- Chưa trả (NULL)
+-- (*Chưa trả (NULL)*)
 SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', NULL, 5000) AS Fine;
--- Kết quả: 0
+-- (*Kết quả: 0*)
 \end{sqlcode}
 
 \subsection{Kiểm tra Triggers}
@@ -3612,7 +3590,7 @@ SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', NULL, 5000) AS Fine;
 \textbf{Kịch bản test:} Thành viên ID=4 đang có sách quá hạn (CopyID=10)
 
 \begin{sqlcode}{Test Trigger 1}
--- Thử mượn sách khác
+(*-- Thử mượn sách khác*)
 EXEC dbo.usp_BorrowBook
     @MemberID = 4,
     @CopyID = 6,
@@ -3639,20 +3617,18 @@ EXEC dbo.usp_BorrowBook @MemberID = 4, @CopyID = 6, @DueDays = 14;
 
 \textbf{Kịch bản test:} Update ReturnDate cho giao dịch quá hạn
 
-\begin{sqlcode}{Test Trigger 2}
--- Tạo giao dịch mượn
-INSERT INTO LOAN (MemberID, CopyID, BorrowDate, DueDate, ReturnDate, OverdueFine)
-VALUES (1, 4, '2026-01-01', '2026-01-15', NULL, 0);
+\begin{sqlcode}{Test ufn_CalculateOverdueFine}
+-- (*Trả đúng hạn*)
+SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-10', 5000) AS Fine;
+-- (*Kết quả: 0*)
 
--- Cập nhật ReturnDate (sau hạn)
-UPDATE LOAN
-SET ReturnDate = '2026-01-25'
-WHERE CopyID = 4 AND ReturnDate IS NULL;
+-- (*Trả muộn 5 ngày*)
+SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', '2026-01-16', 5000) AS Fine;
+-- (*Kết quả: 25000*)
 
--- Kiểm tra OverdueFine
-SELECT LoanID, DueDate, ReturnDate, OverdueFine
-FROM LOAN
-WHERE CopyID = 4;
+-- (*Chưa trả (NULL)*)
+SELECT dbo.ufn_CalculateOverdueFine('2026-01-01', NULL, 5000) AS Fine;
+-- (*Kết quả: 0*)
 \end{sqlcode}
 
 \textbf{Kết quả mong đợi:}
