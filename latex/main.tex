@@ -716,7 +716,7 @@ Sau khi xác định các thực thể, chúng tôi phân tích và xác định
 2 & Writes & \entity{AUTHOR} & \entity{BOOK} & M : N & Tác giả viết sách (qua BOOK\_AUTHOR) \\ \hline
 3 & Has & \entity{BOOK} & \entity{BOOK\_COPY} & 1 : N & Một sách có nhiều bản sao vật lý \\ \hline
 4 & Processes & \entity{MEMBER} & \entity{LOAN} & 1 : N & Thành viên tạo nhiều giao dịch mượn \\ \hline
-5 & Records & \entity{LOAN} & \entity{BOOK\_COPY} & 1 : 1 & Một giao dịch ghi nhận một bản sao \\ \hline
+5 & Records & \entity{LOAN} & \entity{BOOK\_COPY} & N : 1 & Một bản sao có nhiều lịch sử giao dịch mượn \\ \hline
 \end{tabular}
 \end{table}
 
@@ -802,12 +802,12 @@ Vì mối quan hệ giữa \entity{AUTHOR} và \entity{BOOK} là nhiều-nhiều
     \item Lưu trữ lịch sử đầy đủ của các giao dịch mượn/trả
 \end{itemize}
 
-\textbf{5. Records (1:1) - LOAN đến BOOK\_COPY}
+\textbf{5. Records (N:1) - LOAN đến BOOK\_COPY}
 \begin{itemize}
-    \item Một giao dịch mượn ghi nhận một bản sao sách cụ thể
-    \item Mỗi bản sao tại một thời điểm chỉ được ghi nhận trong một giao dịch đang hoạt động
+    \item Một bản sao sách có thể có nhiều lịch sử giao dịch mượn khác nhau (mượn, trả, rồi lại mượn)
+    \item Mỗi giao dịch mượn ghi nhận một bản sao sách cụ thể
     \item Ràng buộc: \attr{CopyID} trong \entity{LOAN} là khóa ngoại tham chiếu đến \entity{BOOK\_COPY}
-    \item Không thể có hai giao dịch mượn đang hoạt động cho cùng một bản sao
+    \item Một bản sao tại một thời điểm chỉ có tối đa một giao dịch đang hoạt động
 \end{itemize}
 
 \textbf{Lưu ý về thiết kế:}
@@ -863,7 +863,7 @@ Báo cáo 1 đã hoàn thành phân tích và thiết kế sơ đồ ERD cho h�
     \item Writes (M:N) - \entity{AUTHOR} ↔ \entity{BOOK} (qua \entity{BOOK\_AUTHOR})
     \item Has (1:N) - \entity{BOOK} → \entity{BOOK\_COPY}
     \item Processes (1:N) - \entity{MEMBER} → \entity{LOAN}
-    \item Records (1:1) - \entity{LOAN} → \entity{BOOK\_COPY}
+    \item Records (N:1) - \entity{LOAN} → \entity{BOOK\_COPY}
 \end{itemize}
 
 \textbf{Lưu ý về thiết kế quan hệ:}
@@ -1006,8 +1006,8 @@ Báo cáo 2 là bước tiếp theo trong quá trình thiết kế cơ sở dữ
 \begin{itemize}
     \item Thêm khóa ngoại vào một trong hai bảng
     \item Khóa ngoại vừa là khóa ngoại vừa là khóa chính
-    \item \textbf{Ví dụ:} \entity{LOAN} (1) $\leftrightarrow$ \entity{BOOK\_COPY} (1)
-    \item \entity{LOAN} có \attr{CopyID} là FK và tham chiếu độc nhất
+    \item \textbf{Ví dụ:} Một nhân viên chỉ có một văn phòng làm việc (\entity{EMPLOYEE} $\leftrightarrow$ \entity{OFFICE})
+    \item \textbf{Lưu ý:} Trong hệ thống thư viện này, tất cả quan hệ đều là 1:N hoặc M:N, không có quan hệ 1:1
 \end{itemize}
 
 \subsection{Chuyển đổi ERD sang Lược đồ Quan hệ}
@@ -2486,6 +2486,27 @@ Cơ sở dữ liệu hiện tại của hệ thống quản lý thư viện \tex
     \item Tránh dư thừa
     \item Dễ mở rộng trong tương lai
 \end{itemize}
+
+\subsubsection{Xác nhận lại Mô hình Quan hệ từ Báo cáo 2}
+
+Sau khi hoàn thành phân tích chuản hóa 1NF, 2NF, 3NF, chúng tôi xác nhận lại rằng \textbf{Mô hình Quan hệ (Relational Data Model)} đã thiết kế trong Báo cáo 2 là hoàn toàn chính xác:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,keepaspectratio]{images/RDM_Library_Management.pdf}
+\caption{Sơ đồ Mô hình Quan hệ (RDM) từ Báo cáo 2 - Đã xác nhận đạt 1NF, 2NF, 3NF}
+\label{fig:rdm_report3_final}
+\end{figure}
+
+\textbf{Kết quả xác nhận:}
+\begin{itemize}
+    \item \textbf{Tất cả 7 bảng đều đạt 1NF:} Thuộc tính nguyên thủy, không đa trị, không nhóm lặp lại
+    \item \textbf{Tất cả 7 bảng đều đạt 2NF:} Không có phụ thuộc hàm một phần
+    \item \textbf{Tất cả 7 bảng đều đạt 3NF:} Không có phụ thuộc hàm truyền tải
+    \item \textbf{Không có bất thường (anomalies):} Insert, Update, Delete đều an toàn
+\end{itemize}
+
+\textbf{Kết luận:} Mô hình Quan hệ từ Báo cáo 2 đã được thiết kế đúng đắn từ đầu, không cần điều chỉnh sau chuẩn hóa.
 
 \vspace{1cm}
 \begin{center}
