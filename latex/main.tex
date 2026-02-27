@@ -2622,6 +2622,25 @@ GO
 USE LibraryDB;
 \end{sqlcode}
 
+\subsubsection{Tổng quan cơ sở dữ liệu}
+
+\textbf{Tổng quan các bảng:}
+\begin{itemize}
+    \item \textbf{PUBLISHER} (1) -- $\leftrightarrow$ -- \textbf{BOOK} (N): Một NXB xuất bản nhiều sách
+    \item \textbf{AUTHOR} (M) -- $\leftrightarrow$ -- \textbf{BOOK} (N): Quan hệ nhiều-nhiều qua BOOK\_AUTHOR
+    \item \textbf{BOOK} (1) -- $\leftrightarrow$ -- \textbf{BOOK\_COPY} (N): Một sách có nhiều bản sao vật lý
+    \item \textbf{MEMBER} (1) -- $\leftrightarrow$ -- \textbf{LOAN} (N): Một thành viên có nhiều giao dịch mượn
+    \item \textbf{BOOK\_COPY} (1) -- $\leftrightarrow$ -- \textbf{LOAN} (N): Một bản sao có nhiều lịch sử giao dịch
+\end{itemize}
+
+\textbf{Xác nhận thiết kế:}
+\begin{itemize}
+    \item ✅ Tất cả 7 bảng đều có Primary Key rõ ràng
+    \item ✅ 7 Foreign Keys đảm bảo tính toàn vẹn tham chiếu
+    \item ✅ Quan hệ N:1 giữa LOAN và BOOK\_COPY (đã sửa đúng theo yêu cầu)
+    \item ✅ Bảng trung gian BOOK\_AUTHOR cho quan hệ M:N
+\end{itemize}
+
 \subsubsection{Xóa bảng nếu tồn tại (để tránh lỗi)}
 
 \begin{sqlcode}{Xóa bảng theo thứ tự đúng}
@@ -2828,11 +2847,6 @@ CREATE TABLE LOAN (
         ON UPDATE CASCADE
         ON DELETE NO ACTION,
 
-    -- Unique Constraint
-    CONSTRAINT UQ_LOAN_CopyID_Active
-        UNIQUE (CopyID)
-        WHERE (ReturnDate IS NULL),
-
     -- Check Constraints
     CONSTRAINT CK_LOAN_DueDate
         CHECK (DueDate >= BorrowDate),
@@ -2841,11 +2855,17 @@ CREATE TABLE LOAN (
     CONSTRAINT CK_LOAN_OverdueFine
         CHECK (OverdueFine >= 0)
 );
+GO
+
+-- Tạo Filtered Unique Index: Mỗi bản sao chỉ được mượn bởi 1 người khi chưa trả
+CREATE UNIQUE NONCLUSTERED INDEX UQ_LOAN_CopyID_Active
+ON LOAN(CopyID)
+WHERE (ReturnDate IS NULL);
 \end{sqlcode}
 
 \textbf{Giải thích ràng buộc:}
 \begin{itemize}
-    \item \texttt{UQ\_LOAN\_CopyID\_Active WHERE (ReturnDate IS NULL)}: Mỗi bản sao chỉ được mượn bởi một người tại một thời điểm
+    \item \texttt{UQ\_LOAN\_CopyID\_Active} (Filtered Unique Index): Mỗi bản sao chỉ được mượn bởi một người tại một thời điểm (chỉ áp dụng khi \texttt{ReturnDate IS NULL})
     \item \texttt{CK\_LOAN\_DueDate}: Ngày hết hạn phải sau ngày mượn
     \item \texttt{CK\_LOAN\_ReturnDate}: Ngày trả phải sau hoặc bằng ngày mượn
 \end{itemize}
@@ -2877,6 +2897,17 @@ CREATE TABLE BOOK_AUTHOR (
     \item Khóa chính kép (\texttt{BookID}, \texttt{AuthorID})
     \item ON DELETE CASCADE trên cả hai khóa ngoại
 \end{itemize}
+
+\subsubsection{Sơ đồ tổng quan cơ sở dữ liệu}
+
+Dưới đây là sơ đồ tổng quan tất cả các bảng và mối quan hệ trong cơ sở dữ liệu LibraryDB sau khi đã tạo xong tất cả các bảng:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,keepaspectratio]{images/dbdiagram.pdf}
+\caption{Sơ đồ tổng quan cơ sở dữ liệu LibraryDB - Tất cả 7 bảng và mối quan hệ}
+\label{fig:dbdiagram}
+\end{figure}
 
 \subsection{Tóm tắt các bảng và ràng buộc}
 
